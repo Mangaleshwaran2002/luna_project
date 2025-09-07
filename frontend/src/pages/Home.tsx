@@ -1,8 +1,7 @@
 import Calendar from "@/components/Calendar";
 import { authClient } from "../lib/auth-client";
+import NotifyMe from "@/components/NotifyMe";
 
-
-// import AppoitmentTable from "@/components/AppointmentTable";
 
 const Home = () => {
   const fetchUserSession = async () => {
@@ -22,6 +21,7 @@ const Home = () => {
   fetchUserSession();
   return (
     <div>
+      <NotifyMe />
       <Calendar/>
     </div>
   );

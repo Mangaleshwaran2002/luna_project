@@ -7,12 +7,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import CreateUserForm from "./CreateUserForm";
+import { UserPlus } from "lucide-react";
 
 export default function UserCreationFormPopup(){
     return (
         <>
         <AlertDialog >
-        <AlertDialogTrigger className="my-2 border-2 px-4 py-2 rounded-md">New</AlertDialogTrigger>
+        <AlertDialogTrigger className="my-2 border-2 px-4 py-2 rounded-md flex items-center gap-2"><UserPlus height={15} width={15} /><span>Create</span></AlertDialogTrigger>
         <AlertDialogContent>
             <AlertDialogHeader>
             <AlertDialogTitle>Create new User</AlertDialogTitle>

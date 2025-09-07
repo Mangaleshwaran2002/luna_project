@@ -67,7 +67,11 @@ export default function CreateUserForm() {
         } else if (data) {
             alert(`User '${data.user.name}' with role '${data.user.role}' created successfully! Initial password is 'changeme'.`);
             setFormData({ name: "", email: "", username: "", role: "user" });
-            window.location.reload()
+            window.location.reload();
+            // setTimeout(() => {
+                
+            // }, 1000);
+            
 
         }
     };

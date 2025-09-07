@@ -2,14 +2,13 @@
 import Appointment from '../models/Appointment.js'; // Use ESM import and add .js extension
 import mongoose from 'mongoose'; // Use ESM import
 import { findOrCreateClient } from '../helpers/index.js'; // Use ESM import and add .js extension
-import { auth } from '../lib/auth.js';
 
 // Create a new appointment with client
 export const createAppointment = async (req, res) => {
   try {
     const { client, ...appointmentData } = req.body;
 
-    const clientDoc = await findOrCreateClient(client.name, client.age);
+    const clientDoc = await findOrCreateClient(client);
     if (!clientDoc) {
       return res.status(400).json({
         success: false,
@@ -20,6 +19,7 @@ export const createAppointment = async (req, res) => {
     const appointment = await Appointment.create({
       ...appointmentData,
       client: clientDoc._id,
+      appointmentDate: new Date(new Date(appointmentData.start).toISOString().split('T')[0]) // UTC midnight
     });
 
     const populatedAppointment = await Appointment.findById(appointment._id).populate('client');
@@ -32,6 +32,7 @@ export const createAppointment = async (req, res) => {
     if (global.io) {
       global.io.to(`appointments:${appointmentDate}`).emit('appointment:created', populatedAppointment);
       global.io.to(`appointments:${monthYear}`).emit('appointment:created', populatedAppointment);
+      global.io.emit('appointment:created', populatedAppointment);
     }
 
     res.status(201).json({
@@ -227,88 +228,29 @@ export const deleteAppointmentsbyId = async (req, res) => {
 
 
 
-
-
-// Filter by date
 export const getAppointmentsByDate = async (req, res) => {
-  // Extract the date from the query parameters (e.g., /appointments?date=YYYY-MM-DD)
   const targetDateStr = req.query.date;
 
-  // Validate the date format
   if (!targetDateStr) {
     return res.status(400).json({ message: 'Date query parameter is required.' });
   }
-  
-  const targetDate = new Date(targetDateStr);
-  if (isNaN(targetDate.getTime())) {
+
+  // Validate format: YYYY-MM-DD
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(targetDateStr)) {
     return res.status(400).json({ message: 'Invalid date format. Please use YYYY-MM-DD.' });
   }
 
-  // Set the start and end of the day to define the date range for the query
-  const startOfDay = new Date(targetDate);
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date(targetDate);
-  endOfDay.setHours(23, 59, 59, 999);
-  
   try {
-    const appointments = await Appointment.aggregate([
-      // Stage 1: Match appointments within the specified date range.
-      {
-        $match: {
-          start: {
-            $gte: startOfDay,
-            $lte: endOfDay,
-          },
-        },
-      },
-      // Stage 2: Populate the client details, just like in getAppointments.
-      {
-        $lookup: {
-          from: 'clients', // The name of the Client collection
-          localField: 'client',
-          foreignField: '_id',
-          as: 'client',
-        },
-      },
-      // Stage 3: Deconstruct the client array.
-      {
-        $unwind: '$client',
-      },
-      // Stage 4: Add the new appointmentDate field.
-      {
-        $addFields: {
-          appointmentDate: {
-            $dateFromParts: {
-              year: { $year: '$start' },
-              month: { $month: '$start' },
-              day: { $dayOfMonth: '$start' },
-            },
-          },
-        },
-      },
-      // Stage 5: Reshape the document.
-      {
-        $project: {
-          _id: 1,
-          client: {
-            _id: '$client._id',
-            name: '$client.name',
-            age: '$client.age',
-            gender: '$client.gender',
-          },
-          appointmentDate: 1,
-          start: 1,
-          end: 1,
-          platform: 1,
-          type: 1,
-          status: 1,
-          notes: 1,
-          createdAt: 1,
-          updatedAt: 1,
-        },
-      },
-    ]);
+    // ✅ Filter by appointmentDate (assumes it's stored as Date in DB)
+    const appointments = await Appointment.find({
+      appointmentDate: new Date(targetDateStr)
+    })
+    .populate('client', '_id name age gender')
+    .lean(); // Optional: for performance
+
+    // If appointmentDate is stored as STRING, use:
+    // appointmentDate: targetDateStr
 
     res.status(200).json({
       success: true,
@@ -316,7 +258,7 @@ export const getAppointmentsByDate = async (req, res) => {
       data: appointments,
     });
   } catch (error) {
-    console.error('Error fetching appointments:', error);
+    console.error('Error fetching appointments by date:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
@@ -415,6 +357,152 @@ export const getAppointmentsByMonthAndYear = async (req, res) => {
 
 import Reschedule from '../models/Rescheduled.js';
 // Update appointment
+// export const updateAppointment = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     // Validate ObjectId
+//     if (!mongoose.Types.ObjectId.isValid(id)) {
+//       return res.status(400).json({ success: false, message: 'Invalid appointment ID' });
+//     }
+
+//     const { status, start, end, platform, type, scheduleBy } = req.body;
+
+//     // Fetch original appointment FIRST
+//     const originalAppointment = await Appointment.findById(id);
+//     if (!originalAppointment) {
+//       return res.status(404).json({ success: false, message: 'Appointment not found' });
+//     }
+
+//     const updateFields = {};
+//     let isReschedule = false;
+
+//     // Handle status update
+//     if (status !== undefined) {
+//       const validStatuses = ['scheduled', 'completed', 'cancelled', 'rescheduled'];
+//       if (!validStatuses.includes(status)) {
+//         return res.status(400).json({ success: false, message: 'Invalid status value' });
+//       }
+//       updateFields.status = status;
+//     }
+
+//     // Handle start/end updates — must come AFTER originalAppointment is fetched
+//     let newStart = start !== undefined ? new Date(start) : originalAppointment.start;
+//     let newEnd = end !== undefined ? new Date(end) : originalAppointment.end;
+
+//     // Validate dates
+//     if (isNaN(newStart.getTime())) {
+//       return res.status(400).json({ success: false, message: 'Invalid start date' });
+//     }
+//     if (isNaN(newEnd.getTime())) {
+//       return res.status(400).json({ success: false, message: 'Invalid end date' });
+//     }
+
+//     // Validate time range
+//     if (newStart >= newEnd) {
+//       return res.status(400).json({ success: false, message: 'Start time must be before end time' });
+//     }
+
+//     // Check if rescheduling (date/time changed)
+//     if (
+//       start !== undefined && newStart.getTime() !== originalAppointment.start.getTime() ||
+//       end !== undefined && newEnd.getTime() !== originalAppointment.end.getTime()
+//     ) {
+//       isReschedule = true;
+
+//       // Force status to 'rescheduled' ONLY if not explicitly overridden
+//       if (status === undefined) {
+//         updateFields.status = 'rescheduled';
+//       }
+
+//       // Create Reschedule record
+//       const rescheduleData = {
+//         client: originalAppointment.client,
+//         appointment: originalAppointment._id,
+//         preschedule: {
+//           start: originalAppointment.start,
+//           end: originalAppointment.end,
+//         },
+//         reschedule: {
+//           start: newStart,
+//           end: newEnd,
+//         },
+//         scheduleBy: scheduleBy || 'admin', // fallback if not provided
+//       };
+
+//       await Reschedule.create(rescheduleData);
+//     }
+//     console.log('\n\n\nRescheduling appointment:', {
+//       original: {
+//         start: originalAppointment.start,
+//         end: originalAppointment.end,
+//       },
+//       new: {
+//         start: newStart,
+//         end: newEnd,
+//       },
+//       scheduleBy,
+//     },'\n\n\n');
+
+//     // Assign validated start/end to updateFields
+//     updateFields.start = newStart;
+//     updateFields.end = newEnd;
+
+//     // Handle platform
+//     if (platform !== undefined) {
+//       const validPlatforms = ['website', 'phone', 'in-person', 'whatsapp', 'instagram'];
+//       if (!validPlatforms.includes(platform)) {
+//         return res.status(400).json({ success: false, message: `Invalid platform. Must be one of: ${validPlatforms.join(', ')}` });
+//       }
+//       updateFields.platform = platform.trim();
+//     }
+
+//     // Handle type
+//     if (type !== undefined) {
+//       const validTypes = ['consultation', 'follow-up', 'treatment'];
+//       if (!validTypes.includes(type)) {
+//         return res.status(400).json({ success: false, message: `Invalid type. Must be one of: ${validTypes.join(', ')}` });
+//       }
+//       updateFields.type = type.trim();
+//     }
+
+//     // Perform update
+//     const updatedAppointment = await Appointment.findByIdAndUpdate(
+//       id,
+//       { $set: updateFields },
+//       { new: true, runValidators: true }
+//     );
+
+//     if (!updatedAppointment) {
+//       return res.status(404).json({ success: false, message: 'Appointment update failed' });
+//     }
+
+//     // Emit socket events
+//     const appointmentDate = new Date(updatedAppointment.start).toISOString().split('T')[0];
+//     const monthYear = appointmentDate.slice(0, 7);
+
+//     if (global.io) {
+//       global.io.to(`appointments:${appointmentDate}`).emit('appointment:updated', updatedAppointment);
+//       global.io.to(`appointments:${monthYear}`).emit('appointment:updated', updatedAppointment);
+//       global.io.emit('appointment:updated', updatedAppointment);
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: isReschedule ? 'Appointment rescheduled successfully' : 'Appointment updated successfully',
+//       data: updatedAppointment,
+//     });
+//   } catch (error) {
+//     console.error('Error updating appointment:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Server error',
+//       error: error.message,
+//     });
+//   }
+// };
+
+// Update appointment
 export const updateAppointment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -424,12 +512,18 @@ export const updateAppointment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid appointment ID' });
     }
 
-    const { status, start, end, platform, type ,scheduleBy } = req.body;
-    if(scheduleBy){
-      console.log(`\n\n\n${scheduleBy}\n\n\n`)
+    const { status, start, end, platform, type, scheduleBy } = req.body;
+
+    // Fetch original appointment FIRST
+    const originalAppointment = await Appointment.findById(id);
+    if (!originalAppointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found' });
     }
+
     const updateFields = {};
     let isReschedule = false;
+
+    // Handle status update
     if (status !== undefined) {
       const validStatuses = ['scheduled', 'completed', 'cancelled', 'rescheduled'];
       if (!validStatuses.includes(status)) {
@@ -437,46 +531,37 @@ export const updateAppointment = async (req, res) => {
       }
       updateFields.status = status;
     }
-    // Validate new date values
 
-    if (start !== undefined) {
-        updateFields.start = new Date(start);
-        if (isNaN(updateFields.start)) {
-          return res.status(400).json({ success: false, message: 'Invalid start date' });
-        }
-    } else {
-        // If only end is updated, use original start
-        updateFields.start = originalAppointment.start;
+    // Handle start/end updates — must come AFTER originalAppointment is fetched
+    let newStart = start !== undefined ? new Date(start) : originalAppointment.start;
+    let newEnd = end !== undefined ? new Date(end) : originalAppointment.end;
+
+    // Validate dates
+    if (isNaN(newStart.getTime())) {
+      return res.status(400).json({ success: false, message: 'Invalid start date' });
     }
-
-    if (end !== undefined) {
-        updateFields.end = new Date(end);
-        if (isNaN(updateFields.end)) {
-          return res.status(400).json({ success: false, message: 'Invalid end date' });
-        }
-    } else {
-        // If only start is updated, use original end
-        updateFields.end = originalAppointment.end;
+    if (isNaN(newEnd.getTime())) {
+      return res.status(400).json({ success: false, message: 'Invalid end date' });
     }
 
     // Validate time range
-    if (updateFields.start >= updateFields.end) {
-        return res.status(400).json({ success: false, message: 'Start time must be before end time' });
+    if (newStart >= newEnd) {
+      return res.status(400).json({ success: false, message: 'Start time must be before end time' });
     }
 
-    // Check if start or end dates are being updated
-    if (start !== undefined || end !== undefined) {
+    // Check if rescheduling (date/time changed)
+    if (
+      start !== undefined && newStart.getTime() !== originalAppointment.start.getTime() ||
+      end !== undefined && newEnd.getTime() !== originalAppointment.end.getTime()
+    ) {
       isReschedule = true;
-      updateFields.status = 'rescheduled';
 
-      // Find the original appointment to get pre-schedule details
-      const originalAppointment = await Appointment.findById(id);
-
-      if (!originalAppointment) {
-        return res.status(404).json({ success: false, message: 'Appointment not found' });
+      // Force status to 'rescheduled' ONLY if not explicitly overridden
+      if (status === undefined) {
+        updateFields.status = 'rescheduled';
       }
 
-      // Prepare reschedule data
+      // Create Reschedule record
       const rescheduleData = {
         client: originalAppointment.client,
         appointment: originalAppointment._id,
@@ -485,23 +570,36 @@ export const updateAppointment = async (req, res) => {
           end: originalAppointment.end,
         },
         reschedule: {
-          start: new Date(start) || originalAppointment.start,
-          end: new Date(end) || originalAppointment.end,
+          start: newStart,
+          end: newEnd,
         },
-        // scheduleBy : 'user', // Added `scheduleBy` for clarity. It's a required field in your `rescheduleSchema`.
-        scheduleBy : scheduleBy
+        scheduleBy: scheduleBy || 'admin', // fallback if not provided
       };
 
-
-      // Create a new Reschedule entry
       await Reschedule.create(rescheduleData);
+    }
+    console.log('\n\n\nRescheduling appointment:', {
+      original: {
+        start: originalAppointment.start,
+        end: originalAppointment.end,
+      },
+      new: {
+        start: newStart,
+        end: newEnd,
+      },
+      scheduleBy,
+    },'\n\n\n');
 
-      // Set appointment status to 'rescheduled'
-      
+    // Assign validated start/end to updateFields
+    updateFields.start = newStart;
+    updateFields.end = newEnd;
+    
+    // ✅ ADD THIS: Update appointmentDate whenever start changes
+    if (start !== undefined) {
+      updateFields.appointmentDate = new Date(new Date(newStart).toISOString().split('T')[0]);
     }
 
-
-
+    // Handle platform
     if (platform !== undefined) {
       const validPlatforms = ['website', 'phone', 'in-person', 'whatsapp', 'instagram'];
       if (!validPlatforms.includes(platform)) {
@@ -510,6 +608,7 @@ export const updateAppointment = async (req, res) => {
       updateFields.platform = platform.trim();
     }
 
+    // Handle type
     if (type !== undefined) {
       const validTypes = ['consultation', 'follow-up', 'treatment'];
       if (!validTypes.includes(type)) {
@@ -518,7 +617,7 @@ export const updateAppointment = async (req, res) => {
       updateFields.type = type.trim();
     }
 
-    // Find and update the appointment
+    // Perform update
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       id,
       { $set: updateFields },
@@ -526,15 +625,12 @@ export const updateAppointment = async (req, res) => {
     );
 
     if (!updatedAppointment) {
-      return res.status(404).json({ success: false, message: 'Appointment not found' });
+      return res.status(404).json({ success: false, message: 'Appointment update failed' });
     }
 
-    const appointmentDate = new Date(updatedAppointment.start).toISOString().split('T')[0];
-    const monthYear = appointmentDate.slice(0, 7);
 
-    if (global.io) {
-      global.io.to(`appointments:${appointmentDate}`).emit('appointment:updated', updatedAppointment);
-      global.io.to(`appointments:${monthYear}`).emit('appointment:updated', updatedAppointment);
+    if(global.io) {
+      global.io.emit('appointment:created', updatedAppointment);
     }
 
     res.status(200).json({

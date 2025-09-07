@@ -29,8 +29,8 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
   
   // State for date and time separately
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [startTime, setStartTime] = useState<string | ''>('');
-  const [endTime, setEndTime] = useState<string | ''>('');
+  const [startTime, setStartTime] = useState<string | ''>('10:00:00');
+  const [endTime, setEndTime] = useState<string | ''>('11:00:00');
   const [scheduleBy, setScheduleBy] = useState<string | ''>('admin');
 
   
@@ -91,17 +91,22 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
       // Make the PUT request using Axios
       // FIXED: Changed URL from localhost:5173 to localhost:5000
       const response = await axios.put(`/api/appointments/${appointmentId}`, dataToSend, {
-        headers: {
-          'Content-Type': 'application/json'
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // ✅ Remove the if(response.status === 200) — Axios will throw on non-2xx
+        if(response.status === 200){
+        alert('Appointment updated successfully!');
+        setMessage('Appointment updated successfully!');
+
+        setMessageType('success');
+        window.location.reload();
         }
-      });
-      if(response.status === 200 ){
-        alert('appointment upadated succesfully')
-      }
-      
-      setMessage('Appointment updated successfully!');
-      setMessageType('success');
-      
+        
+
+
       // Reset form after successful submission
       setStartDate(undefined);
       setStartTime('');

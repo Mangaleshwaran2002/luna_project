@@ -11,6 +11,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { ChevronDownIcon,ArrowLeft  } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios_config';
@@ -41,8 +51,17 @@ const AppointmentForm: React.FC = () => {
 
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
+const handleClientSelectChange = (value: 'male' | 'female') => {
+  setFormData((prev) => ({
+    ...prev,
+    client: {
+      ...prev.client,
+      gender: value, // ✅ Now compatible!
+    },
+  }));
+};
   // Handle client input changes
-  const handleClientChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleClientChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=> {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -102,8 +121,10 @@ const AppointmentForm: React.FC = () => {
 
       const result = response.data;
       setResponseMessage('Appointment created successfully!');
-      navigate('/')
       console.log('Success:', result);
+      setTimeout(() => {
+                    navigate('/');
+      }, 1500);
 
     } catch (error) {
       setResponseMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -146,17 +167,23 @@ const AppointmentForm: React.FC = () => {
           </div>
           <div className="space-y-1">
             <Label htmlFor="client-gender">Gender</Label>
-            <select
-              id="client-gender"
+            <Select
               name="gender"
               value={formData.client.gender}
-              onChange={handleClientChange}
+              onValueChange={handleClientSelectChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
+              <SelectTrigger className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <SelectValue placeholder="Select Gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Gender</SelectLabel>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1">

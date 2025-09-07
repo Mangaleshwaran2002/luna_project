@@ -1,28 +1,19 @@
 import Client from '../models/Client.js';
 
-// Helper function to normalize name
-const normalizeName = (name) => {
-    if (!name) {
-    return '';
-  }
-  let tempName = name.toLowerCase();
-  tempName = tempName.replace(/[^a-zA-Z0-9\s]/g, ''); // Filter special characters, allowing spaces
-  tempName = tempName.replace(/\s+/g, '_'); // Replace one or more spaces with a single underscore
-  return tempName;
-};
-
-// Helper function to find or create a client by name
-export const findOrCreateClient = async (clientName,clientAge,clientGender) => {
-  if (!clientName && !clientAge) {
+// Helper function to find or create a client by normalized name
+export const findOrCreateClient = async (clientdata) => {
+  if (!clientdata || !clientdata.normalizedName) {
     return null;
   }
-  const normalizedName = normalizeName(clientName);
-  let client = await Client.findOne({ normalizedName });
+
+  let client = await Client.findOne({ normalizedName: clientdata.normalizedName });
+
   if (!client) {
-    client = new Client({ name: clientName, age : clientAge, gender : clientGender});
+    client = new Client(clientdata); // ✅ Fixed: use clientdata, not client
     await client.save();
   }
-  return client._id;
+
+  return client;
 };
 
 // Helper function to parse time string (e.g., "10:00 AM")

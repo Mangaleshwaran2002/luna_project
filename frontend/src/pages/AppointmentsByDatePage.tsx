@@ -25,20 +25,8 @@ const AppointmentsByDatePage = () => {
     }
   // Listen for new/deleted appointments
   const handleCreated = (newAppointment: Appointment) => {
-    const formatted: Appointment = {
-      _id: newAppointment._id,
-      client: newAppointment.client,
-      appointmentDate: new Date(newAppointment.start).toISOString().split('T')[0],
-      start: newAppointment.start,
-      end: newAppointment.end,
-      platform: newAppointment.platform,
-      type: newAppointment.type,
-      status: newAppointment.status,
-      notes: newAppointment.notes,
-      createdAt: newAppointment.createdAt,
-      updatedAt: newAppointment.updatedAt,
-    };
-    setAppointments(prev => [...prev, formatted]);
+    // ✅ Trust the server — DO NOT recalculate appointmentDate
+    setAppointments(prev => [...prev, newAppointment]);
   };
   if(isConnected){
       // Join the room for this date

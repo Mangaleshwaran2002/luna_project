@@ -12,6 +12,7 @@ import DateCell from "./DateCell";
 import { useNavigate } from "react-router-dom";
 import type { Appointment, ApiAppointment } from '../types';
 import axios from "../utils/axios_config";
+import { useSocket } from '../context/SocketContext';
 
 
 // Month and Year Lists
@@ -29,6 +30,15 @@ const Calendar: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { socket } = useSocket();
+  if (!socket) {
+        return;
+  }
+  // const handleCreated = (newAppointment: Appointment) => {
+  //       console.log(`new appointment created at ${newAppointment.start}`);
+        
+  // };
+  // socket.on('appointment:created', handleCreated);
 
   useEffect(() => {
 
@@ -104,10 +114,11 @@ const Calendar: React.FC = () => {
 // Handle date click
   const handleDateClick = (dateKey: string) => {
     console.log(`\n\n\nspecific date clicked ${dateKey}\n\n`)
-    const dailyAppointments = appointmentsByDate[dateKey] || [];
-    if (dailyAppointments.length > 0) {
-      navigate(`/appointments/${dateKey}`);
-    }
+    // const dailyAppointments = appointmentsByDate[dateKey] || [];
+    navigate(`/appointments/${dateKey}`);
+    // if (dailyAppointments.length > 0) {
+    //   navigate(`/appointments/${dateKey}`);
+    // }
   };
 
   // Generate calendar grid

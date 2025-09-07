@@ -24,6 +24,7 @@ import type { RescheduleRecord } from '../types';
 import { Button } from "./ui/button";
 import { Trash2, Search, Filter } from "lucide-react";
 import axios from '../utils/axios_config'
+import { useAuth } from "@/context/Auth";
 
 const customFormatTime = (isoString: string): string => {
   const date = new Date(isoString);
@@ -43,13 +44,16 @@ const RescheduleRecordsTable: React.FC = () => {
   const [records, setRecords] = useState<RescheduleRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [isAdmin,setIsAdmin] =useState<boolean | null>(false)
   const [searchTerm, setSearchTerm] = useState("");
   const [scheduleByFilter, setScheduleByFilter] = useState<string>("all");
-
+  const { user } = useAuth();
   // Fetch data from the backend API
   useEffect(() => {
     const fetchRecords = async () => {
+      if(user?.role === 'admin'){
+        setIsAdmin(true);
+      }
       try {
         setLoading(true); // Set loading to true before fetching
         const response = await axios.get("/api/reschedule/");
@@ -58,6 +62,7 @@ const RescheduleRecordsTable: React.FC = () => {
         
         // Assuming the API returns a { success, count, data } object
         if (data.success) {
+        
           setRecords(data.data as RescheduleRecord[]);
         } else {
           setError("Failed to fetch records from API");
@@ -169,13 +174,13 @@ const RescheduleRecordsTable: React.FC = () => {
                   <TableCell>{customFormatTime(record.reschedule.start)}</TableCell>
                   <TableCell>{record.scheduleBy}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => handleDelete(record._id)}
-                    >
+                    {isAdmin ? (<Button variant="destructive" size="icon" onClick={() => handleDelete(record._id)}>
                       <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </Button>): (<Button variant="destructive" size="icon" disabled={true}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>)
+                    }
+                    
                   </TableCell>
                 </TableRow>
               ))

@@ -7,6 +7,10 @@ const appointmentSchema = new mongoose.Schema({
     ref: 'Client',
     required: true,
   },
+  appointmentDate: {
+    type: Date,
+    // Set this from start date at creation time
+  },
   start: {
     type: Date,
     unique: true,

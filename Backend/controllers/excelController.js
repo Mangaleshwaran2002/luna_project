@@ -19,6 +19,7 @@ export const exportAppointments = async (req, res) => {
             { header: 'Client Age', key: 'clientAge' },
             { header: 'Client Gender', key: 'clientGender' },
             { header: 'Client Contact', key: 'clientContact' },
+            { header: 'Client Address', key: 'clientAddress' },
             { header: 'Appointment Date', key: 'appointmentDate' },
             { header: 'Start Time', key: 'startTime' },
             { header: 'End Time', key: 'endTime' },
@@ -34,6 +35,7 @@ export const exportAppointments = async (req, res) => {
             clientAge: appt.client ? appt.client.age : 'N/A',
             clientContact: appt.client ? appt.client.contact : 'N/A',
             clientGender:appt.client ? appt.client.gender : 'N/A',
+            clientAddress:appt.client ? appt.client.address : 'N/A',
             appointmentDate: formatDate(appt.start),
             startTime: formatTime(appt.start),
             endTime: formatTime(appt.end),
@@ -109,8 +111,17 @@ export const importAppointments = async (req, res) => {
                 const clientName = row['Client Name'];
                 const clientAge = row['Client Age'];
                 const clientGender = row['Client Gender'];
-                const clientId = await findOrCreateClient(clientName, clientAge,clientGender);
+                const clientContact =row['Client Contact'];
+                const clientAddress =row['Client Address'];
+                client_data={
+                    name:clientName,
+                    age:clientAge,
+                    gender:clientGender,
+                    contact:clientContact,
+                    address:clientAddress
 
+                }
+                const clientId = await findOrCreateClient(client_data);
                 // Create the start and end Date objects
                 const startDateTime = combineDateTime(row['Appointment Date'], row['Start Time']);
                 const endDateTime = combineDateTime(row['Appointment Date'], row['End Time']);
@@ -193,30 +204,30 @@ export const exportReschedules = async (req, res) => {
             { header: 'Client Age', key: 'clientAge' },
             { header: 'Client Gender', key: 'clientGender' },
             { header: 'Client Contact', key: 'clientContact' },
-            { header: 'Original Start', key: 'originalStart' },
-            { header: 'Original End', key: 'originalEnd' },
-            { header: 'Rescheduled Start', key: 'rescheduledStart' },
-            { header: 'Rescheduled End', key: 'rescheduledEnd' },
-            { header: 'Scheduled By', key: 'scheduledBy' },
-            { header: 'Appointment Platform', key: 'platform' },
-            { header: 'Appointment Type', key: 'type' },
-            { header: 'Appointment Status', key: 'status' },
+            { header: 'Client Address', key: 'clientAddress' },
+            { header: 'Appointment Date', key: 'appointmentDate' },
+            { header: 'Start Time', key: 'startTime' },
+            { header: 'End Time', key: 'endTime' },
+            { header: 'Platform', key: 'platform' },
+            { header: 'Type', key: 'type' },
+            { header: 'Status', key: 'status' },
+            { header: 'Notes', key: 'notes' },
         ];
 
         // Add data
-        const data = reschedules.map(rs => ({
-            clientName: rs.client?.name || 'N/A',
-            clientAge: rs.client?.age || 'N/A',
-            clientGender: rs.client?.gender || 'N/A',
-            clientContact: rs.client?.contact || 'N/A',
-            originalStart: formatDate(rs.preschedule.start),
-            originalEnd: formatTime(rs.preschedule.end),
-            rescheduledStart: formatDate(rs.reschedule.start),
-            rescheduledEnd: formatTime(rs.reschedule.end),
-            scheduledBy: rs.scheduleBy,
-            platform: rs.appointment?.platform || 'N/A',
-            type: rs.appointment?.type || 'N/A',
-            status: rs.appointment?.status || 'N/A',
+        const data = appointments.map(appt => ({
+            clientName: appt.client ? appt.client.name : 'N/A',
+            clientAge: appt.client ? appt.client.age : 'N/A',
+            clientContact: appt.client ? appt.client.contact : 'N/A',
+            clientGender:appt.client ? appt.client.gender : 'N/A',
+            clientAddress:appt.client ? appt.client.address : 'N/A',
+            appointmentDate: formatDate(appt.start),
+            startTime: formatTime(appt.start),
+            endTime: formatTime(appt.end),
+            platform: appt.platform,
+            type: appt.type,
+            status: appt.status,
+            notes: appt.notes,
         }));
         worksheet.addRows(data);
 
@@ -286,7 +297,17 @@ export const importReschedules = async (req, res) => {
                 const clientName = row['Client Name'];
                 const clientAge = row['Client Age'];
                 const clientGender = row['Client Gender'];
-                const clientId = await findOrCreateClient(clientName, clientAge, clientGender);
+                const clientContact =row['Client Contact'];
+                const clientAddress =row['Client Address'];
+                client_data={
+                    name:clientName,
+                    age:clientAge,
+                    gender:clientGender,
+                    contact:clientContact,
+                    address:clientAddress
+
+                }
+                const clientId = await findOrCreateClient(client_data);
 
                 if (!clientId) {
                     errors.push({ row, error: "Client name is required to find or create client." });
