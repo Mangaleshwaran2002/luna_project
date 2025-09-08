@@ -23,6 +23,13 @@ import type { Appointment } from '../types';
 import { Label } from "./ui/label";
 import { Link } from "react-router-dom";
 import AppointmentUpdateFormPopup from "./AppointmentUpdateFormPopup";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 interface AppointmentTableProps {
   appointments: Appointment[];
@@ -75,6 +82,171 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
   }, [appointments, searchTerm, statusFilter, typeFilter, platformFilter]);
 
   
+  // return (
+  //   <div className="rounded-lg border bg-card text-card-foreground shadow-sm mt-6">
+  //     {/* Header */}
+  //     <div className="flex flex-col space-y-1.5 p-6">
+  //       <h3 className="text-2xl font-semibold leading-none tracking-tight flex items-center gap-2">
+  //         <Calendar className="h-5 w-5" />
+  //         Appointments for {formattedDisplayDate}
+  //         <Badge variant="secondary" className="ml-2">
+  //           {totalAppointments} appointment{totalAppointments !== 1 ? "s" : ""}
+  //         </Badge>
+  //       </h3>
+  //     </div>
+
+  //     {/* Filters & Search */}
+  //     <div className="p-6 pt-0 ">
+  //       <div className="flex flex-wrap gap-4 mb-6 p-4 bg-muted/50 rounded-lg">
+  //         {/* Search */}
+  //         <div className="flex flex-col items-center gap-2">
+  //           <Label>Search</Label>
+  //           <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+  //           <Search className="h-4 w-4 font-bold" />
+  //             <Input type="text" placeholder="Search by client name or notes..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="flex-1 pr-5"
+  //             />
+  //         </div>
+  //         </div>
+          
+
+  //         {/* Status Filter */}
+  //         <div className="flex flex-col items-center gap-2">
+  //           <Label>Status</Label>
+  //           <div className="flex items-center gap-2">
+  //           <Filter className="h-4 w-4 font-bold" />
+            
+  //           <Select value={statusFilter} onValueChange={setStatusFilter}>
+  //             <SelectTrigger className="w-[140px]">
+  //               <SelectValue placeholder="All Status" />
+  //             </SelectTrigger>
+  //             <SelectContent>
+  //               {statusOptions.map(option => (
+  //                 <SelectItem key={option} value={option}>{option}</SelectItem>
+  //               ))}
+  //             </SelectContent>
+  //           </Select>
+  //         </div>
+  //         </div>
+          
+
+  //         {/* Type Filter */}
+  //         <div className="flex flex-col items-center gap-2">
+  //           <Label>Type</Label>
+  //           <div className="flex items-center gap-2">
+  //           <Select value={typeFilter} onValueChange={setTypeFilter}>
+  //             <SelectTrigger className="w-[140px]">
+  //               <SelectValue placeholder="All Types" />
+  //             </SelectTrigger>
+  //             <SelectContent>
+  //               {typeOptions.map(option => (
+  //                 <SelectItem key={option} value={option}>{option}</SelectItem>
+  //               ))}
+  //             </SelectContent>
+  //           </Select>
+  //         </div>
+  //         </div>
+          
+          
+  //         {/* Platform Filter */}
+  //         <div className="flex flex-col items-center gap-2">
+  //           <Label>Platform</Label>
+  //           <div className="flex items-center gap-2">
+  //           <Select value={platformFilter} onValueChange={setPlatformFilter}>
+  //             <SelectTrigger className="w-[140px]">
+  //               <SelectValue placeholder="All Platforms" />
+  //             </SelectTrigger>
+  //             <SelectContent>
+  //               {platformOptions.map(option => (
+  //                 <SelectItem key={option} value={option}>{option}</SelectItem>
+  //               ))}
+  //             </SelectContent>
+  //           </Select>
+  //         </div>
+  //         </div>
+          
+  //       </div>
+
+  //       {/* Table using ShadCN */}
+  //       <div className="overflow-x-auto">
+  //         <Table>
+  //           <TableCaption>A list of appointments for {formattedDisplayDate}.</TableCaption>
+  //           <TableHeader>
+  //             <TableRow>
+  //               <TableHead>Client Name</TableHead>
+  //               <TableHead>Age</TableHead>
+  //               <TableHead>Time</TableHead>
+  //               <TableHead>Type</TableHead>
+  //               <TableHead>Platform</TableHead>
+  //               <TableHead>Status</TableHead>
+  //               <TableHead>Notes</TableHead>
+  //               <TableHead>Actions</TableHead>
+  //             </TableRow>
+  //           </TableHeader>
+  //           <TableBody>
+  //             {filteredAppointments.length > 0 ? (
+  //               filteredAppointments.map((apt) => (
+  //                 <TableRow key={apt._id}>
+  //                   <TableCell className="font-medium">{apt.client.name}</TableCell>
+  //                   <TableCell>{apt.client.age}</TableCell>
+  //                   <TableCell>
+  //                     {customFormatTime(apt.start)} - {customFormatTime(apt.end)}
+  //                   </TableCell>
+  //                   <TableCell>
+  //                     {/* "consultation" | "follow-up" | "treatment";  */}
+  //                     <Badge variant="outline" className={`capitalize inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors 
+  //                     ${apt.type === 'consultation' ? 'border-green-500'
+  //                       : apt.type === 'follow-up' ? 'border-red-500' 
+  //                       : apt.type === 'treatment' ?'border-blue-500':''}`}>
+  //                       {apt.type}
+  //                     </Badge>
+  //                   </TableCell>
+  //                   <TableCell className="capitalize">{apt.platform.replace("-", " ")}</TableCell>
+  //                   <TableCell>
+  //                     <Badge variant="secondary" className={`capitalize capitalize inline-flex items-center text-white rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border
+  //                     ${apt.status === 'completed' ? 'bg-green-700'
+  //                       : apt.status === 'cancelled' ? 'bg-red-700' 
+  //                       : apt.status === 'rescheduled' ?'bg-black'
+  //                       : apt.status === 'scheduled' ? ' bg-blue-700':''} `}>
+  //                       {apt.status}
+  //                     </Badge>
+  //                   </TableCell>
+  //                   <TableCell className="max-w-xs truncate" title={apt.notes}>
+  //                     {apt.notes}
+  //                   </TableCell>
+  //                   <TableCell>
+  //                     <div className="flex items-center gap-1">
+  //                       <AppointmentUpdateFormPopup appointmentId={apt._id} />
+  //                     {/* Call the parent's function here */}
+  //                     <Button variant="ghost" size="icon" className="text-destructive" onClick={() => onDeleteAppointment(apt._id)}>
+  //                       <Trash2 className="h-4 w-4" />
+  //                     </Button>
+  //                     </div>
+  //                   </TableCell>
+  //                 </TableRow>
+  //               ))
+  //             ) : (
+  //               <TableRow>
+  //                 <TableCell colSpan={8} className="h-24 text-center font-bold">
+  //                   No appointments found matching your criteria.
+  //                 </TableCell>
+  //               </TableRow>
+  //             )}
+  //           </TableBody>
+  //         </Table>
+  //         <div className="mt-6 flex gap-3 items-center justify-center">
+  //             <Button variant={'outline'} className="px-4 py-2  text-sm font-medium rounded  transition">
+  //             <Link
+  //               to="/"
+  //               className="flex gap-1 md:gap-2"
+  //             >
+  //               <CircleChevronLeft className="mt-0.5" /><span>Calendar</span>
+  //             </Link>
+  //             </Button>
+  //           </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
   return (
     <div className="rounded-lg border bg-card text-card-foreground shadow-sm mt-6">
       {/* Header */}
@@ -89,78 +261,84 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
       </div>
 
       {/* Filters & Search */}
-      <div className="p-6 pt-0 ">
+      <div className="p-6 pt-0">
         <div className="flex flex-wrap gap-4 mb-6 p-4 bg-muted/50 rounded-lg">
           {/* Search */}
           <div className="flex flex-col items-center gap-2">
             <Label>Search</Label>
             <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-            <Search className="h-4 w-4 text-muted-foreground" />
-              <Input type="text" placeholder="Search by client name or notes..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="flex-1 pr-5"
+              <Search className="h-4 w-4 font-bold" />
+              <Input
+                type="text"
+                placeholder="Search by client name or notes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1 pr-5"
               />
+            </div>
           </div>
-          </div>
-          
 
           {/* Status Filter */}
           <div className="flex flex-col items-center gap-2">
             <Label>Status</Label>
             <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {statusOptions.map(option => (
-                  <SelectItem key={option} value={option}>{option}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Filter className="h-4 w-4 font-bold" />
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          </div>
-          
 
           {/* Type Filter */}
           <div className="flex flex-col items-center gap-2">
             <Label>Type</Label>
             <div className="flex items-center gap-2">
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                {typeOptions.map(option => (
-                  <SelectItem key={option} value={option}>{option}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  {typeOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          </div>
-          
-          
+
           {/* Platform Filter */}
           <div className="flex flex-col items-center gap-2">
             <Label>Platform</Label>
             <div className="flex items-center gap-2">
-            <Select value={platformFilter} onValueChange={setPlatformFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="All Platforms" />
-              </SelectTrigger>
-              <SelectContent>
-                {platformOptions.map(option => (
-                  <SelectItem key={option} value={option}>{option}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="All Platforms" />
+                </SelectTrigger>
+                <SelectContent>
+                  {platformOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          </div>
-          
         </div>
 
-        {/* Table using ShadCN */}
-        <div className="overflow-x-auto">
+        {/* TABLE — Visible on medium and larger screens */}
+        <div className="overflow-x-auto hidden md:block">
           <Table>
             <TableCaption>A list of appointments for {formattedDisplayDate}.</TableCaption>
             <TableHeader>
@@ -185,21 +363,36 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                       {customFormatTime(apt.start)} - {customFormatTime(apt.end)}
                     </TableCell>
                     <TableCell>
-                      {/* "consultation" | "follow-up" | "treatment";  */}
-                      <Badge variant="outline" className={`capitalize inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors 
-                      ${apt.type === 'consultation' ? 'border-green-500'
-                        : apt.type === 'follow-up' ? 'border-red-500' 
-                        : apt.type === 'treatment' ?'border-blue-500':''}`}>
+                      <Badge
+                        variant="outline"
+                        className={`capitalize inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors
+                          ${apt.type === "consultation"
+                            ? "border-green-500 text-green-700"
+                            : apt.type === "follow-up"
+                            ? "border-red-500 text-red-700"
+                            : apt.type === "treatment"
+                            ? "border-blue-500 text-blue-700"
+                            : ""}`}
+                      >
                         {apt.type}
                       </Badge>
                     </TableCell>
-                    <TableCell className="capitalize">{apt.platform.replace("-", " ")}</TableCell>
+                    <TableCell className="capitalize">
+                      {apt.platform.replace("-", " ")}
+                    </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className={`capitalize capitalize inline-flex items-center text-white rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border
-                      ${apt.status === 'completed' ? 'bg-green-700'
-                        : apt.status === 'cancelled' ? 'bg-red-700' 
-                        : apt.status === 'rescheduled' ?'bg-black'
-                        : apt.status === 'scheduled' ? ' bg-blue-700':''} `}>
+                      <Badge
+                        className={`capitalize inline-flex items-center text-white rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors
+                          ${apt.status === "completed"
+                            ? "bg-green-700"
+                            : apt.status === "cancelled"
+                            ? "bg-red-700"
+                            : apt.status === "rescheduled"
+                            ? "bg-black"
+                            : apt.status === "scheduled"
+                            ? "bg-blue-700"
+                            : ""}`}
+                      >
                         {apt.status}
                       </Badge>
                     </TableCell>
@@ -209,33 +402,119 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <AppointmentUpdateFormPopup appointmentId={apt._id} />
-                      {/* Call the parent's function here */}
-                      <Button variant="ghost" size="icon" className="text-destructive" onClick={() => onDeleteAppointment(apt._id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => onDeleteAppointment(apt._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="h-24 text-center font-bold">
                     No appointments found matching your criteria.
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
-          <div className="mt-6 flex gap-3 items-center justify-center">
-              <Button variant={'outline'} className="px-4 py-2  text-sm font-medium rounded  transition">
-              <Link
-                to="/"
-                className="flex gap-1 md:gap-2"
-              >
-                <CircleChevronLeft className="mt-0.5" /><span>Calendar</span>
-              </Link>
-              </Button>
-            </div>
+        </div>
+
+        {/* CARDS — Visible only on small/mobile screens */}
+        <div className="space-y-4 block md:hidden">
+          {filteredAppointments.length > 0 ? (
+            filteredAppointments.map((apt) => (
+              <Card key={apt._id} className="border shadow-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">{apt.client.name}</CardTitle>
+                    <Badge
+                      className={`capitalize text-white rounded-full px-2 py-0.5 text-xs font-semibold
+                        ${apt.status === "completed"
+                          ? "bg-green-700"
+                          : apt.status === "cancelled"
+                          ? "bg-red-700"
+                          : apt.status === "rescheduled"
+                          ? "bg-black"
+                          : apt.status === "scheduled"
+                          ? "bg-blue-700"
+                          : ""}`}
+                    >
+                      {apt.status}
+                    </Badge>
+                  </div>
+                  <CardDescription>
+                    {customFormatTime(apt.start)} - {customFormatTime(apt.end)}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div>
+                      <span className="text-xs font-bold">Age</span>
+                      <p>{apt.client.age}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold">Type</span>
+                      <Badge
+                        variant="outline"
+                        className={`capitalize w-fit text-xs py-0.5 mx-2 sm:mx-4 px-2
+                          ${apt.type === "consultation"
+                            ? "border-green-500 text-green-700"
+                            : apt.type === "follow-up"
+                            ? "border-red-500 text-red-700"
+                            : apt.type === "treatment"
+                            ? "border-blue-500 text-blue-700"
+                            : ""}`}
+                      >
+                        {apt.type}
+                      </Badge>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold">Platform</span>
+                      <p className="capitalize">{apt.platform.replace("-", " ")}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold">Notes</span>
+                      <p className="truncate" title={apt.notes}>
+                        {apt.notes || "—"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-2">
+                    <AppointmentUpdateFormPopup appointmentId={apt._id} />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => onDeleteAppointment(apt._id)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" /> Delete
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <p className="text-center font-bold py-8">
+              No appointments found matching your criteria.
+            </p>
+          )}
+        </div>
+
+        {/* Back Button (responsive-friendly) */}
+        <div className="mt-6 flex gap-3 items-center justify-center">
+          <Button variant={"outline"} className="px-4 py-2 text-sm font-medium rounded transition">
+            <Link to="/" className="flex gap-1 md:gap-2 items-center">
+              <CircleChevronLeft className="h-4 w-4" />
+              <span>Calendar</span>
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
           })}
           {user && (
           <>
-          <Button variant={'link'} className='flex items-center text-whote hover:text-gray-300 transition-all duration-200' onClick={logout}>
+          <Button variant={'link'} className='flex items-center text-white hover:text-gray-300 transition-all duration-200' onClick={logout}>
             <LogOut /> <span>logout</span>
             </Button>
           </>
@@ -135,9 +135,21 @@ const Navbar: React.FC = () => {
                 </li>
               );
             })}
+          <li>
+          {user && (
+          <>
+          <Button variant={'link'} className='flex justify-start w-full  p-2.5 text-gray-200 hover:bg-gray-700 rounded transition-colors' onClick={logout}>
+            <LogOut /> <span>logout</span>
+            </Button>
+          </>
+          )}
+            
+          </li>
+
           </ul>
         </div>
       )}
+
     </nav>
   );
 };

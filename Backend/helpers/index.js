@@ -2,11 +2,15 @@ import Client from '../models/Client.js';
 
 // Helper function to find or create a client by normalized name
 export const findOrCreateClient = async (clientdata) => {
-  if (!clientdata || !clientdata.normalizedName) {
+  if (!clientdata ) {
     return null;
   }
-
-  let client = await Client.findOne({ normalizedName: clientdata.normalizedName });
+  // Helper to normalize client name (lowercase, trim, remove extra spaces)
+  const normalizeName = (name) => {
+    return name.trim().toLowerCase().replace(/\s+/g, ' ');
+  };
+  const normalizeClientName =normalizeName(clientdata.name);
+  let client = await Client.findOne({ normalizedName: normalizeClientName });
 
   if (!client) {
     client = new Client(clientdata); // ✅ Fixed: use clientdata, not client
