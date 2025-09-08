@@ -34,11 +34,6 @@ const Calendar: React.FC = () => {
   if (!socket) {
         return;
   }
-  // const handleCreated = (newAppointment: Appointment) => {
-  //       console.log(`new appointment created at ${newAppointment.start}`);
-        
-  // };
-  // socket.on('appointment:created', handleCreated);
 
   useEffect(() => {
 
@@ -236,6 +231,29 @@ const Calendar: React.FC = () => {
         {/* Calendar Grid */}
         <div className="flex-1 grid grid-cols-7 grid-rows-6 auto-rows-fr">
           {renderCalendar()}
+        </div>
+        <div className="flex justify-center items-center space-x-2 md:space-x-6">
+          {/* Non-rescheduled consultation count */}
+          <div className="flex justify-center items-center">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-500 rounded-full">
+          </span>
+          <span className="mx-2 capitalize">consultations</span>
+          </div>
+          <div className="flex justify-center items-center">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-green-500 rounded-full">
+          </span>
+          <span className="mx-2 capitalize">treatments</span>
+          </div>
+          <div className="flex justify-center items-center">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-red-500 rounded-full">
+          </span>
+          <span className="mx-2 capitalize">follow_up</span>
+          </div>
+          <div className="flex justify-center items-center">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-orange-500 rounded-full">
+          </span>
+          <span className="mx-2 capitalize">rescheduled</span>
+          </div>
         </div>
       </div>
     </>
