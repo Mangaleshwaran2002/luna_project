@@ -41,8 +41,7 @@ try {
 const app = express();
 
 app.use(cors({
-    // origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
-    origin :'*',
+    origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
     credentials: true,
 }));
 
