@@ -41,7 +41,8 @@ try {
 const app = express();
 
 app.use(cors({
-    origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
+    // origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
+    origin :'*',
     credentials: true,
 }));
 
@@ -75,7 +76,8 @@ console.log("Allowed origin:", process.env.APP_URL || 'http://localhost:5173');
 const httpServer = createServer(app); // ← Create server from Express app
 const io = new Server(httpServer, {
     cors: {
-        origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
+        // origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
+        origin :'*',
         methods: ['GET', 'POST'],
         credentials: true
     }
@@ -120,6 +122,10 @@ app.get('/profile', async (req, res) => {
     } else {
         res.status(401).send('Unauthorized');
     }
+});
+// Profile route
+app.get('/check-env', async (req, res) => {
+    res.json({ PORT: process.env.PORT, APP_URL: process.env.APP_URL,BETTER_AUTH_URL: process.env.BETTER_AUTH_URL});
 });
 
 // Create-admin route

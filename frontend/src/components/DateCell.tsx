@@ -22,8 +22,8 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
 
   return (
     <div
-      className={`
-        h-auto p-1 border rounded-lg cursor-pointer hover:shadow-md hover:border-primary transition-all
+      className={`flex justify-between w-15 md:w-40 h-30 md:h-40 px-1 md:px-2
+        h-auto p-1 border md:rounded-lg cursor-pointer hover:shadow-md hover:border-primary transition-all
         ${!isCurrentMonth ? "bg-gray-50 text-gray-400" : isToday ? "bg-blue-200" : "bg-white"}
       `}
       onClick={onClick}
@@ -33,7 +33,7 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
       <div className="flex gap-1 mt-1">
         {/* Non-rescheduled consultation count */}
         {consultations > 0 && (
-          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-blue-500 rounded-full">
+          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-blue-300 rounded-full">
             {consultations}
           </div>
         )}

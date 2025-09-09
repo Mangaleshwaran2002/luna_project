@@ -109,11 +109,9 @@ const Calendar: React.FC = () => {
 // Handle date click
   const handleDateClick = (dateKey: string) => {
     console.log(`\n\n\nspecific date clicked ${dateKey}\n\n`)
-    // const dailyAppointments = appointmentsByDate[dateKey] || [];
+
     navigate(`/appointments/${dateKey}`);
-    // if (dailyAppointments.length > 0) {
-    //   navigate(`/appointments/${dateKey}`);
-    // }
+
   };
 
   // Generate calendar grid
@@ -223,36 +221,38 @@ const Calendar: React.FC = () => {
           </Button>
         </div>
         {/* Weekday headers */}
-        <div className="grid grid-cols-7 text-center font-semibold text-muted-foreground border-b bg-secondary">
+        <div className="mx-auto">
+          <div className="grid grid-cols-7 text-center font-semibold text-muted-foreground border-b bg-secondary">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
             <div key={day} className="p-2 sm:p-5">{day}</div>
           ))}
         </div>
         {/* Calendar Grid */}
-        <div className="flex-1 grid grid-cols-7 grid-rows-6 auto-rows-fr">
+        <div className="flex-1 grid grid-cols-7 grid-rows-6 auto-rows-fr space-x-1">
           {renderCalendar()}
         </div>
-        <div className="flex justify-center items-center space-x-2 md:space-x-6">
+        </div>
+        <div className="flex justify-center items-center space-x-2 md:space-x-6 flex-col md:flex-row">
           {/* Non-rescheduled consultation count */}
           <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-500 rounded-full">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-300 rounded-full">
           </span>
-          <span className="mx-2 capitalize">consultations</span>
+          <span className="mx-2 capitalize text-xs md:text-sm">consultations</span>
           </div>
           <div className="flex justify-center items-center">
           <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-green-500 rounded-full">
           </span>
-          <span className="mx-2 capitalize">treatments</span>
+          <span className="mx-2 capitalize text-xs md:text-sm">treatments</span>
           </div>
           <div className="flex justify-center items-center">
           <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-red-500 rounded-full">
           </span>
-          <span className="mx-2 capitalize">follow_up</span>
+          <span className="mx-2 capitalize text-xs md:text-sm">follow_up</span>
           </div>
           <div className="flex justify-center items-center">
           <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-orange-500 rounded-full">
           </span>
-          <span className="mx-2 capitalize">rescheduled</span>
+          <span className="mx-2 capitalize text-xs md:text-sm">rescheduled</span>
           </div>
         </div>
       </div>
