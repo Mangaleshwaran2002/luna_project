@@ -14,7 +14,7 @@ RUN npm ci --only=production
 COPY . .
 
 # Expose port (used internally, mapped via docker-compose)
-EXPOSE 5000
+# EXPOSE 5000
 
 # Create uploads directory (if not exists in repo)
 RUN mkdir -p uploads

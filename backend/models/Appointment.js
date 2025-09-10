@@ -11,6 +11,14 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     // Set this from start date at creation time
   },
+  category:{
+    type : String,
+    trim: true,
+  },
+  sub_category:{
+    type:String,
+    trim: true,
+  },
   start: {
     type: Date,
     unique: true,

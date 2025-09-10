@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setIsLoading(false);
           return;
         }
-
+        console.log(`session data : ${sessionData}`)
         const { user: userData, session: sessionObj } = sessionData;
 
         // Transform and sanitize user
@@ -108,6 +108,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         setUser(transformedUser);
         setSession(transformedSession);
+        // setUser(userData);
+        // setSession(sessionObj)
 
       } catch (err) {
         console.error("Failed to initialize auth:", err);
@@ -121,7 +123,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
+    await authClient.signOut();
     setUser(null);
     setSession(null);
   };

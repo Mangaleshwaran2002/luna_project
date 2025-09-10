@@ -19,12 +19,11 @@ const clientSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ['male', 'female'],
-    default:'male',
+    default:'female',
     trim: true,
   },
   contact: {
     type: String,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'],
   },
   address: {
     type: String,

@@ -113,7 +113,7 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
     };
     console.debug(payload);
     try {
-      const response = await axios.post('http://localhost:5000/api/appointments', payload, {
+      const response = await axios.post('/api/appointments', payload, {
         headers: {
           'Content-Type': 'application/json',
         },

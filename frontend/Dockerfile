@@ -3,9 +3,14 @@ FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
+# Define build args
+ARG VITE_APP_URL
+
+ENV VITE_API_URL=${VITE_APP_URL}
 # Copy package files
 COPY package*.json ./
 
+RUN echo "VITE_APP_URL=${VITE_APP_URL}" > .env
 # Install dependencies
 RUN npm ci
 
@@ -25,7 +30,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
-EXPOSE 80
+# EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

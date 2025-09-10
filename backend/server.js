@@ -39,11 +39,11 @@ try {
 
 // Initialize Express
 const app = express();
-
 app.use(cors({
-    origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
+    origin: [process.env.APP_URL || 'http://localhost:5173'],
     credentials: true,
-}));
+}));  
+
 
 // Mount the Better Auth handler for all /api/auth requests.
 app.all('/api/auth/{*any}', toNodeHandler(auth));
@@ -75,12 +75,14 @@ console.log("Allowed origin:", process.env.APP_URL || 'http://localhost:5173');
 const httpServer = createServer(app); // ← Create server from Express app
 const io = new Server(httpServer, {
     cors: {
-        // origin: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
-        origin :'*',
+        origin: [process.env.APP_URL || 'http://localhost:5173'],
+        // origin :'*',
         methods: ['GET', 'POST'],
         credentials: true
     }
 });
+
+
 
 // Store io instance so controllers can access it
 global.io = io;
@@ -124,7 +126,7 @@ app.get('/profile', async (req, res) => {
 });
 // Profile route
 app.get('/check-env', async (req, res) => {
-    res.json({ PORT: process.env.PORT, APP_URL: process.env.APP_URL,BETTER_AUTH_URL: process.env.BETTER_AUTH_URL});
+    res.json({ PORT: process.env.PORT, APP_URL: process.env.APP_URL,BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,MONGO_URI :process.env.MONGO_URI});
 });
 
 // Create-admin route

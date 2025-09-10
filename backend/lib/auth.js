@@ -28,7 +28,7 @@ export const auth = betterAuth({
             enabled: true
         }
     },
-    trustedOrigins: [process.env.APP_URL || 'http://localhost:5173','http://localhost','http://localhost:80'],
+    trustedOrigins: [process.env.APP_URL || 'http://localhost:5173'],
     plugins: [
         admin(),
         username(),
