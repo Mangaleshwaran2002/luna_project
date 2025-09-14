@@ -13,11 +13,14 @@ import {
 import { Label } from "@/components/ui/label";
 // Define a type for the possible roles
 type Role = "user" | "admin";
-import {    
-    AlertDialogAction,
-   AlertDialogCancel} from "@/components/ui/alert-dialog"
+// import {    
+//     AlertDialogAction,
+//    AlertDialogCancel} from "@/components/ui/alert-dialog"
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateUserForm() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -60,6 +63,7 @@ export default function CreateUserForm() {
         });
 
         setLoading(false);
+        navigate('/admin')
 
         if (error) {
             console.error(error);
@@ -67,11 +71,7 @@ export default function CreateUserForm() {
         } else if (data) {
             alert(`User '${data.user.name}' with role '${data.user.role}' created successfully! Initial password is 'changeme'.`);
             setFormData({ name: "", email: "", username: "", role: "user" });
-            window.location.reload();
-            // setTimeout(() => {
-                
-            // }, 1000);
-            
+            window.location.reload();          
 
         }
     };
@@ -82,14 +82,14 @@ export default function CreateUserForm() {
 
     return (
         // ... your JSX remains unchanged ...
-        <div className="flex flex-col items-center justify-center p-6 max-w-md mx-auto text-black">
+        <div className="flex flex-col items-center justify-center p-6 max-w-md text-black ring-2 rounded-md mx-2 md:mx-auto my-5 md:my-9">
             <form onSubmit={handleCreateUser} className="w-full space-y-3 md:space-y-6">
                 <div className="grid gap-2">
-                    <Label htmlFor="name">Name</Label>
+                    <Label className="text-md font-semibold" htmlFor="name">Name</Label>
                     <Input
                         id="name"
                         name="name"
-                        placeholder="Enter full name"
+                        placeholder="Enter fullname"
                         value={formData.name}
                         onChange={handleInputChange}
                         required
@@ -97,7 +97,7 @@ export default function CreateUserForm() {
                 </div>
 
                 <div className="grid gap-2">
-                    <Label htmlFor="username">Username</Label>
+                    <Label className="text-md font-semibold" htmlFor="username">Username</Label>
                     <Input
                         id="username"
                         name="username"
@@ -109,7 +109,7 @@ export default function CreateUserForm() {
                 </div>
 
                 <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label className="text-md font-semibold" htmlFor="email">Email</Label>
                     <Input
                         id="email"
                         name="email"
@@ -121,10 +121,10 @@ export default function CreateUserForm() {
                     />
                 </div>
 
-                <div className="grid gap-2 place-items-center">
-                    <Label htmlFor="role">Role</Label>
-                    <Select name="role" value={formData.role} onValueChange={handleRoleChange} >
-                        <SelectTrigger id="role" className="w-6/12">
+                <div className="flex flex-col gap-2 md:gap-3">
+                    <Label className="text-md font-semibold" htmlFor="role">Role</Label>
+                    <Select name="role" value={formData.role} onValueChange={handleRoleChange}  >
+                        <SelectTrigger id="role" className="w-full">
                             <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                         <SelectContent>
@@ -134,10 +134,10 @@ export default function CreateUserForm() {
                     </Select>
                 </div>
                 <div className="flex gap-5 w-full justify-center">
-                <AlertDialogCancel className="capitalize text-black">cancel</AlertDialogCancel>
-                <AlertDialogAction type="submit" >
+                
+                <Button type="submit" >
                     Create User
-                </AlertDialogAction>
+                </Button>
                 </div>
                 
             </form>

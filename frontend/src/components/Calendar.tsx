@@ -35,6 +35,19 @@ const Calendar: React.FC = () => {
         return;
   }
 
+  const handleCreated = (newAppointment: Appointment) => {
+      // ✅ Trust the server — DO NOT recalculate appointmentDate
+      console.debug(`\n\n${newAppointment} \n\n`)
+      // setAppointments(prev => [...prev, newAppointment]);
+      window.location.reload();
+  };
+  const handledeleted = () => {
+      // ✅ Trust the server — DO NOT recalculate appointmentDate
+      // setAppointments(prev => [...prev, newAppointment]);
+      window.location.reload();
+  };
+  socket.on('appointment:created', handleCreated);
+  socket.on('appointment:deleted', handledeleted);
   useEffect(() => {
 
     const fetchAppointments = async () => {
@@ -74,6 +87,7 @@ const Calendar: React.FC = () => {
 
     fetchAppointments();
     return () => {
+      setAppointments([]);
   };
   }, [currentMonth, currentYear]);
   // Navigate month
@@ -156,16 +170,16 @@ const Calendar: React.FC = () => {
 
   return (
     <>
-      <div className="h-screen flex flex-col bg-background border">
+      <div className="md:h-screen flex flex-col bg-background">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b bg-card gap-2">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+        <div className="flex flex-row sm:flex-row items-start sm:items-center justify-between p-4 border-b mb-1 bg-card gap-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-6/12 sm:w-auto">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="icon"
                 onClick={() => navigateMonth("prev")}
-                className="shrink-0"
+                className="shrink-0 hidden md:flex"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -205,7 +219,7 @@ const Calendar: React.FC = () => {
                 variant="outline"
                 size="icon"
                 onClick={() => navigateMonth("next")}
-                className="shrink-0"
+                className="shrink-0 hidden md:flex"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -213,7 +227,7 @@ const Calendar: React.FC = () => {
           </div>
           <Button
             // variant="outline"
-            className="flex items-center gap-2 w-full sm:w-auto shrink-0"
+            className="hidden md:flex items-center gap-2 sm:w-auto shrink-0 w-6/12"
             size="sm"
             onClick={() => navigate('/appointments/new')}
           >
@@ -224,15 +238,26 @@ const Calendar: React.FC = () => {
         <div className="mx-auto">
           <div className="grid grid-cols-7 text-center font-semibold text-muted-foreground border-b bg-secondary">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="p-2 sm:p-5">{day}</div>
+            <div key={day} className="p-2 sm:p-5 w-13 md:w-auto">{day}</div>
           ))}
         </div>
         {/* Calendar Grid */}
-        <div className="flex-1 grid grid-cols-7 grid-rows-6 auto-rows-fr space-x-1">
+        <div className="grid grid-cols-7 md:grid-rows-6 md:auto-rows-fr space-x-1">
           {renderCalendar()}
         </div>
+        <div className="flex md:hidden items-center justify-center my-3">
+          <Button
+            // variant="outline"
+            className="flex md:hidden items-center gap-2 sm:w-auto shrink-0 w-6/12"
+            size="sm"
+            onClick={() => navigate('/appointments/new')}
+          >
+            <Plus className="h-4 w-4" /> Add Appointment
+        </Button>
         </div>
-        <div className="flex justify-center items-center space-x-2 md:space-x-6 flex-col md:flex-row">
+
+        </div>
+        <div className="hidden md:flex justify-center items-center space-x-2 md:space-x-6 flex-col md:flex-row">
           {/* Non-rescheduled consultation count */}
           <div className="flex justify-center items-center">
           <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-300 rounded-full">
@@ -240,14 +265,19 @@ const Calendar: React.FC = () => {
           <span className="mx-2 capitalize text-xs md:text-sm">consultations</span>
           </div>
           <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-green-500 rounded-full">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-green-300 rounded-full">
           </span>
           <span className="mx-2 capitalize text-xs md:text-sm">treatments</span>
           </div>
           <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-red-500 rounded-full">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-red-300 rounded-full">
           </span>
           <span className="mx-2 capitalize text-xs md:text-sm">follow_up</span>
+          </div>
+          <div className="flex justify-center items-center">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-teal-300 rounded-full">
+          </span>
+          <span className="mx-2 capitalize text-xs md:text-sm">maintenance</span>
           </div>
           <div className="flex justify-center items-center">
           <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-orange-500 rounded-full">

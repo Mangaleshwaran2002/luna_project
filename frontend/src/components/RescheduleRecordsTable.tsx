@@ -83,6 +83,9 @@ const RescheduleRecordsTable: React.FC = () => {
     };
 
     fetchRecords();
+    return ()=>{
+      setRecords([]);
+    }
   }, []); // The empty dependency array ensures this runs only once on mount
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this record?")) {
@@ -126,84 +129,6 @@ const RescheduleRecordsTable: React.FC = () => {
     return <div className="text-center py-8 text-red-500">Error: {error}</div>;
   }
 
-  // return (
-  //   <div className="space-y-4 sm:space-y-8 md:mx-10">
-  //     <div className="flex items-center justify-between">
-  //       <div>
-  //         <div className="flex flex-wrap gap-4 mb-6 p-4  rounded-lg">
-  //         {/* Search */}
-  //         <div className="relative">
-  //           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-  //           <Input placeholder="Search by client name or scheduler..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-[300px] pl-9"/>
-  //         </div>
-          
-  //         <div className="flex items-center gap-2">
-  //           <Filter className="h-4 w-4 text-muted-foreground" />
-  //           <Select onValueChange={setScheduleByFilter} defaultValue="all">
-  //             <SelectTrigger className="w-[180px]">
-  //               <SelectValue placeholder="Filter by Scheduler" />
-  //             </SelectTrigger>
-  //             <SelectContent>
-  //               {scheduleByOptions.map((option) => (
-  //                 <SelectItem key={option} value={option}>
-  //                   {option === "all" ? "All Schedulers" : option}
-  //                 </SelectItem>
-  //               ))}
-  //             </SelectContent>
-  //           </Select>
-  //         </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     <div className="rounded-md border sm:border-2 p-2 md:p-5 shadow-md">
-  //       <Table className="mx-auto">
-  //         <TableCaption>
-  //           Total Records: {filteredRecords.length} of {totalRecords}
-  //         </TableCaption>
-  //         <TableHeader>
-  //           <TableRow>
-  //             <TableHead>Client Name</TableHead>
-  //             <TableHead>Original Appointment</TableHead>
-  //             <TableHead>Rescheduled Date</TableHead>
-  //             <TableHead>Rescheduled Time</TableHead>
-  //             <TableHead>Scheduled By</TableHead>
-  //             <TableHead>Actions</TableHead>
-  //           </TableRow>
-  //         </TableHeader>
-  //         <TableBody>
-  //           {filteredRecords.length > 0 ? (
-  //             filteredRecords.map((record) => (
-  //               <TableRow key={record._id}>
-  //                 <TableCell className="font-medium">{record.client.name}</TableCell>
-  //                 <TableCell>
-  //                   {customFormatDate(record.preschedule.start)} at {customFormatTime(record.preschedule.start)}
-  //                 </TableCell>
-  //                 <TableCell>{customFormatDate(record.reschedule.start)}</TableCell>
-  //                 <TableCell>{customFormatTime(record.reschedule.start)}</TableCell>
-  //                 <TableCell>{record.scheduleBy}</TableCell>
-  //                 <TableCell>
-  //                   {isAdmin ? (<Button variant="destructive" size="icon" onClick={() => handleDelete(record._id)}>
-  //                     <Trash2 className="h-4 w-4" />
-  //                   </Button>): (<Button variant="destructive" size="icon" disabled={true}>
-  //                     <Trash2 className="h-4 w-4" />
-  //                   </Button>)
-  //                   }
-                    
-  //                 </TableCell>
-  //               </TableRow>
-  //             ))
-  //           ) : (
-  //             <TableRow>
-  //               <TableCell colSpan={6} className="h-24 text-center">
-  //                 No records found.
-  //               </TableCell>
-  //             </TableRow>
-  //           )}
-  //         </TableBody>
-  //       </Table>
-  //     </div>
-  //   </div>
-  // );
   return (
     <div className="space-y-6 p-4 sm:p-6 md:mx-10">
       {/* Filters Section */}
@@ -305,24 +230,29 @@ const RescheduleRecordsTable: React.FC = () => {
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   <div>
-                    <span className="text-xs font-bold">Original Date</span>
-                    <p>{customFormatDate(record.preschedule.start)}</p>
+                    <span className="text-lg font-
+      dockerfile: Dockerfile
+      args:
+        VITE_APP_URL: ${VITE_APP_URL}
+
+    volumes:bold">Original Date</span>
+                    <p className="text-lg text-gray-600">{customFormatDate(record.preschedule.start)}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-bold">Original Time</span>
-                    <p>{customFormatTime(record.preschedule.start)}</p>
+                    <span className="text-lg font-bold">Original Time</span>
+                    <p className="text-lg text-gray-600">{customFormatTime(record.preschedule.start)}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-bold">Rescheduled Date</span>
-                    <p>{customFormatDate(record.reschedule.start)}</p>
+                    <span className="text-lg font-bold">Rescheduled Date</span>
+                    <p className="text-lg text-gray-600">{customFormatDate(record.reschedule.start)}</p>
                   </div>
                   <div>
-                    <span className="text-xs font-bold">Rescheduled Time</span>
-                    <p>{customFormatTime(record.reschedule.start)}</p>
+                    <span className="text-lg font-bold">Rescheduled Time</span>
+                    <p className="text-lg text-gray-600">{customFormatTime(record.reschedule.start)}</p>
                   </div>
-                  <div className="col-span-2">
-                    <span className="text-xs font-bold">Scheduled By</span>
-                    <Badge variant="secondary" className="mt-1 capitalize">
+                  <div className="col-span-2 space-x-2">
+                    <span className="text-lg font-bold">Scheduled By</span>
+                    <Badge variant="secondary" className="mt-1 capitalize text-lg text-gray-600">
                       {record.scheduleBy}
                     </Badge>
                   </div>
@@ -344,7 +274,7 @@ const RescheduleRecordsTable: React.FC = () => {
           ))
         ) : (
           <div className="text-center py-10 text-muted-foreground bg-muted/40 rounded-lg">
-            <p>No records found.</p>
+            <p className="text-lg text-gray-600">No records found.</p>
           </div>
         )}
       </div>

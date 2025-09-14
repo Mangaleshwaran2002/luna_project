@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppointmentData } from '../types';
 
 // shadcn/ui imports
@@ -25,6 +25,30 @@ import { ChevronDownIcon,ArrowLeft  } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../utils/axios_config';
 
+
+const CATEGORIES = [
+  'Skin brightening treatment',
+  'Hyperpigmentation treatment',
+  'Hair regrowth Treatment',
+  'Skin reguvination treatment',
+  'Dark neck treatment',
+  'Lip pigmentation treatment',
+  'Perioral pigmentation treatment',
+  'Peri orbital pigmentation treatment',
+  'Melasma treatment',
+];
+
+const SUB_CATEGORIES = [
+  'Advance Hydra Facial',
+  'Dermaplaning',
+  'PRP',
+  'Chemical Peel',
+  'Gluta Mesotherapy',
+  'Cryo therapy',
+  'Bio light therapy',
+  'Gluta Hydra Facial',
+];
+
 const AppointmentForm: React.FC = () => {
   const navigate = useNavigate();
   // Client and metadata fields
@@ -40,7 +64,10 @@ const AppointmentForm: React.FC = () => {
     type: 'consultation',
     status: 'scheduled',
     notes: '',
+    category: '',     // 👈 Added
+    sub_category: '', // 👈 Added
   });
+  // const [errors, setErrors] = useState<Partial<Record<keyof typeof formData, string>>>({});
 
   // Separate date and time state
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
@@ -51,50 +78,89 @@ const AppointmentForm: React.FC = () => {
 
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
 
-const handleClientSelectChange = (value: 'male' | 'female') => {
-  setFormData((prev) => ({
-    ...prev,
-    client: {
-      ...prev.client,
-      gender: value, // ✅ Now compatible!
-    },
-  }));
-};
-  // Handle client input changes
-  const handleClientChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=> {
-    const { name, value } = e.target;
+// Handle category change
+  const handleCategoryChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: value,
+      // Optionally reset sub_category when category changes
+      sub_category: '',
+    }));
+  };
+
+  // Handle sub-category change
+  const handleSubCategoryChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      sub_category: value,
+    }));
+  };
+
+  const handleClientSelectChange = (value: 'male' | 'female') => {
     setFormData((prev) => ({
       ...prev,
       client: {
         ...prev.client,
-        [name]: value,
+        gender: value, // ✅ Now compatible!
       },
     }));
   };
 
-  // Handle top-level fields (platform, type, notes)
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+    // Handle client input changes
+  const handleClientChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>)=> {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        client: {
+          ...prev.client,
+          [name]: value,
+        },
+      }));
+    };
 
-  // Combine date and time into ISO string
+    // Handle top-level fields (platform, type, notes)
+  const handleInputChange = (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
+    // Combine date and time into ISO string
   const combineDateTime = (date: Date | undefined, time: string): string | '' => {
-    if (!date || !time) return '';
-    console.log(`time.split : ${time.split(':')}`)
-    const [hours, minutes, seconds] = time.split(':');
-    const combined = new Date(date);
-    combined.setHours(Number(hours), Number(minutes), Number(seconds || 0), 0);
-    return combined.toISOString();
+      if (!date || !time) return '';
+      console.log(`time.split : ${time.split(':')}`)
+      const [hours, minutes, seconds] = time.split(':');
+      const combined = new Date(date);
+      combined.setHours(Number(hours), Number(minutes), Number(seconds || 0), 0);
+      return combined.toISOString();
+    };
+
+
+
+  // Validate form before submission
+  const validateForm = () => {
+
+    if (!formData.category) {
+      setResponseMessage('Error: Please select a category');
+      return false
+    }
+
+    if (!formData.sub_category) {
+      setResponseMessage('Error: Please select a sub-category');
+      return false
+    }
+    return true
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if(!validateForm()){
+      return;
+    }
 
     // Combine date + time into ISO strings
     const start = combineDateTime(startDate, startTime);
@@ -131,7 +197,26 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
       console.error('Submission error:', error);
     }
   };
-
+  useEffect(()=>{
+    return ()=>{
+      setFormData({
+    client: {
+      name: '',
+      age: '',
+      gender: 'female',
+      contact: '+91',
+      address: '',
+    },
+    platform: 'website',
+    type: 'consultation',
+    status: 'scheduled',
+    notes: '',
+    category: '',     // 👈 Added
+    sub_category: '', // 👈 Added
+  });
+  setResponseMessage('');
+    }
+  },[]);
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg space-y-4 sm:space-y-8 my-2 sm:my-4">
       <Button className='px-2 sm:px-5' onClick={()=> navigate('/')}>
@@ -151,7 +236,7 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
               name="name"
               value={formData.client.name}
               onChange={handleClientChange}
-              required
+              required={true}
             />
           </div>
 
@@ -163,6 +248,7 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
               type="number"
               value={formData.client.age}
               onChange={handleClientChange}
+              required={true}
             />
           </div>
           <div className="space-y-1">
@@ -171,7 +257,7 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
               name="gender"
               value={formData.client.gender}
               onValueChange={handleClientSelectChange}
-              required
+              required={true}
             >
               <SelectTrigger className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <SelectValue placeholder="Select Gender" />
@@ -260,6 +346,60 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
           </div>
         </div>
 
+        {/* Category */}
+        <div className="space-y-1">
+          <Label htmlFor="category">Category</Label>
+          <Select
+            required={true}
+            name="category"
+            value={formData.category || ''}
+            onValueChange={handleCategoryChange}
+          >
+            <SelectTrigger className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <SelectValue placeholder="Select a category"  aria-required={true} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Category</SelectLabel>
+                {CATEGORIES.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Sub-Category */}
+        <div className="space-y-1">
+          <Label htmlFor="sub_category">Sub-Category</Label>
+          <Select
+            required={true}
+            name="sub_category"
+            value={formData.sub_category || ''}
+            onValueChange={handleSubCategoryChange}
+            disabled={!formData.category} // Disable until category is selected
+          >
+            <SelectTrigger className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <SelectValue placeholder="Select a sub-category" aria-required={true} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Sub-Category</SelectLabel>
+                {SUB_CATEGORIES.map((subCat) => (
+                  <SelectItem key={subCat} value={subCat}>
+                    {subCat}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          {!formData.category && (
+            <p className="mt-1 text-sm text-gray-500">Select a category first</p>
+          )}
+        </div>
+
         {/* Platform */}
         <div className="space-y-1">
           <Label htmlFor="platform">Platform</Label>
@@ -292,7 +432,7 @@ const handleClientSelectChange = (value: 'male' | 'female') => {
           >
             <option value="consultation">Consultation</option>
             <option value="treatment">Treatment</option>
-            <option value="follow-up">Follow-Up</option>
+            <option value="maintenance">Maintenance</option>
           </select>
         </div>
 

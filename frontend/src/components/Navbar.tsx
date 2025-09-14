@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/Auth';
 
 // Import Lucide icons
-import {  User, Calendar, LogIn,UserRoundCog, RefreshCcw, LogOut } from 'lucide-react';
+import { Calendar, LogIn,UserRoundCog, RefreshCcw, LogOut, Users, User } from 'lucide-react';
 import { Button } from './ui/button';
-
+import logo from '../assets/logo.svg'
 // Define the NavLink interface
 interface NavLink {
   path: string;
@@ -34,6 +34,7 @@ const Navbar: React.FC = () => {
     if(user.role === 'admin'){
       navLinks.push(
       { path: '/admin', label: 'Admin', icon: UserRoundCog },
+      { path: '/clients', label: 'Clients', icon: Users },
     );
     }
   } else {
@@ -45,12 +46,14 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-gray-800 p-4 text-white">
+    <nav className="bg-white p-4 text-black shadow-sm mb-2">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold">
           <Link to="/">
-          <div className='space-x-2 '>
+          <div className='space-x-2 flex'>
+            <img src={logo} alt="logo" width={50} height={40} /> 
+            {/* <img src="./logo.svg" alt="logo" width={50} height={40} /> */}
             <span>Luna Skin</span>
             <span className='hidden md:inline-flex'>Aesthetics</span>
           </div>
@@ -62,20 +65,17 @@ const Navbar: React.FC = () => {
           {navLinks.map((link, index) => {
             const Icon = link.icon;
             return (
-              <li key={index}>
-                <Button variant={'link'} className='flex items-center text-whote hover:text-gray-300 transition-all duration-200'>
-                <Link to={link.path} className='flex gap-1'  
-                >
+              <li key={index} className='flex'>
+                <Link to={link.path} className='flex items-center text-black hover:bg-gray-700 hover:text-white transition-all duration-200 mx-3 px-3 py-2 rounded-lg '>
                 <Icon width={15} height={15} className="mr-1" />
                   {link.label}
                 </Link>
-                </Button>
               </li>
             );
           })}
           {user && (
           <>
-          <Button variant={'link'} className='flex items-center text-white hover:text-gray-300 transition-all duration-200' onClick={logout}>
+          <Button variant={'ghost'} className='flex items-center text-black hover:bg-gray-700 hover:text-white transition-all duration-200' onClick={logout}>
             <LogOut /> <span>logout</span>
             </Button>
           </>
@@ -118,7 +118,7 @@ const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-gray-800 mt-2 rounded-md shadow-lg">
+        <div className="md:hidden bg-white mt-2 rounded-md shadow-lg">
           <ul className="flex flex-col gap-1 px-2 py-3">
             {navLinks.map((link, index) => {
               const Icon = link.icon;
@@ -126,7 +126,7 @@ const Navbar: React.FC = () => {
                 <li key={index}>
                   <Link
                     to={link.path}
-                    className="flex items-center p-2.5 text-gray-200 hover:bg-gray-700 rounded transition-colors"
+                    className="flex items-center p-2.5 text-black hover:bg-gray-700 hover:text-white rounded transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Icon width={10} height={10} className="mr-2" />
@@ -138,7 +138,7 @@ const Navbar: React.FC = () => {
           <li>
           {user && (
           <>
-          <Button variant={'link'} className='flex justify-start w-full  p-2.5 text-gray-200 hover:bg-gray-700 rounded transition-colors' onClick={logout}>
+          <Button variant={'ghost'} className='flex justify-start w-full  p-2.5 text-black hover:bg-gray-700 hover:text-white rounded transition-colors' onClick={logout}>
             <LogOut /> <span>logout</span>
             </Button>
           </>

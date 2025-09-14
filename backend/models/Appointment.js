@@ -11,21 +11,21 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     // Set this from start date at creation time
   },
+  start: {
+    type: Date,
+  },
+  end: {
+    type: Date,
+  },
   category:{
     type : String,
     trim: true,
+    default : '',
   },
   sub_category:{
     type:String,
     trim: true,
-  },
-  start: {
-    type: Date,
-    unique: true,
-  },
-  end: {
-    type: Date,
-    unique: true,
+    default : '',
   },
   platform: {
     type: String,
@@ -34,7 +34,7 @@ const appointmentSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['consultation', 'follow-up', 'treatment'],
+    enum: ['consultation', 'treatment','maintenance'],
     trim: true,
   },
   status: {

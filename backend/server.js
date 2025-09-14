@@ -93,10 +93,12 @@ global.io = io;
 async function registerRoutes() {
     const AppointmentRoutes = await import('./routes/AppointmentRoutes.js');
     const RescheduleRoutes = await import('./routes/RescheduleRoutes.js');
+    const ClientsRoutes = await import('./routes/clientRoutes.js');
     // const { requireAuth } = await import('./middlewares/auth_middleware.js'); 
 
     app.use('/api/appointments',  AppointmentRoutes.default);
     app.use('/api/reschedule',  RescheduleRoutes.default);
+    app.use('/api/clients',  ClientsRoutes.default);
 }
 registerRoutes();
 
@@ -136,11 +138,37 @@ app.get('/create-admin', async (req, res) => {
         body: {
             email: 'admin@example.com',
             password: 'adminpass',
-            name: 'James Smith',
+            name: 'Krithika sk',
             role: 'admin',
             data: {
                 username: 'admin',
-                displayUsername: 'superuser'
+                displayUsername: 'krithika sk'
+            },
+        },
+    });
+    if (newUser) {
+        res.json({ message: 'admin account created', user: newUser });
+    } else {
+        res.status(401).send('Unauthorized');
+    }
+    }catch(err){
+        res.status(500).json({ message: 'error while creating admin.', error: err });
+    }
+    
+});
+
+// Create-admin route
+app.get('/create-superuser', async (req, res) => {
+    try{
+    const newUser = await auth.api.createUser({
+        body: {
+            email: 'admin@example.com',
+            password: 'superuser',
+            name: 'Mangal Dev',
+            role: 'admin',
+            data: {
+                username: 'superuser',
+                displayUsername: 'Mangal developer'
             },
         },
     });

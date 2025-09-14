@@ -13,24 +13,32 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
   // Filter and count appointments based on type and status
   const consultations = appointments.filter((apt) => apt.type === "consultation" && apt.status !== "rescheduled").length;
   const treatments = appointments.filter((apt) => apt.type === "treatment" && apt.status !== "rescheduled").length;
-  const follow_up = appointments.filter((apt) => apt.type === "follow-up" && apt.status !== "rescheduled").length;
+  const maintenance = appointments.filter((apt) => apt.type === "maintenance" && apt.status !== "rescheduled").length;
+
   
   // New: Count specifically for rescheduled types
   const rescheduledConsultations = appointments.filter((apt) => apt.type === "consultation" && apt.status === "rescheduled").length;
   const rescheduledTreatments = appointments.filter((apt) => apt.type === "treatment" && apt.status === "rescheduled").length;
-  const rescheduledFollow_up = appointments.filter((apt) => apt.type === "follow-up" && apt.status === "rescheduled").length;
+  const rescheduledMaintenance = appointments.filter((apt) => apt.type === "maintenance" && apt.status === "rescheduled").length;
 
   return (
     <div
-      className={`flex justify-between w-15 md:w-40 h-30 md:h-40 px-1 md:px-2
+      className={`flex justify-center md:justify-between w-13 md:w-40 h-40 md:h-40 px-1 md:px-2
         h-auto p-1 border md:rounded-lg cursor-pointer hover:shadow-md hover:border-primary transition-all
-        ${!isCurrentMonth ? "bg-gray-50 text-gray-400" : isToday ? "bg-blue-200" : "bg-white"}
+        ${!isCurrentMonth ? "bg-gray-50 text-gray-400" : isToday ? "bg-gray-200" : "bg-white"}
       `}
       onClick={onClick}
     >
-      <div className="text-sm font-medium">{day}</div>
+      {/* <div className="text-lg md:text-sm font-medium">{day}</div> */}
+      <div className={`text-lg md:text-sm font-medium px-2 rounded-full 
+        ${consultations && 'border-2 border-blue-300'} 
+        ${treatments && 'border-2 border-green-300'} 
+        ${maintenance && 'border-2 border-teal-300'}
+        ${(rescheduledConsultations > 0 || rescheduledTreatments > 0  || rescheduledMaintenance > 0) && 'border-2 border-orange-300'}
+        
+        md:border-0`}>{day}</div> 
 
-      <div className="flex gap-1 mt-1">
+      <div className="hidden md:flex gap-1 mt-1">
         {/* Non-rescheduled consultation count */}
         {consultations > 0 && (
           <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-blue-300 rounded-full">
@@ -45,7 +53,7 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
         )}
         {/* Non-rescheduled treatment count */}
         {treatments > 0 && (
-          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-green-500 rounded-full">
+          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-green-300 rounded-full">
             {treatments}
           </div>
         )}
@@ -55,16 +63,17 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
             {rescheduledTreatments}
           </div>
         )}
+
         {/* Follow-up count (unchanged) */}
-        {follow_up > 0 && (
-          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-red-500 rounded-full">
-            {follow_up}
+        {maintenance > 0 && (
+          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-teal-300 rounded-full">
+            {maintenance}
           </div>
         )}
         {/* Rescheduled Follow-up count */}
-        {rescheduledFollow_up > 0 && (
+        {rescheduledMaintenance > 0 && (
           <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-orange-500 rounded-full">
-            {rescheduledFollow_up}
+            {rescheduledMaintenance}
           </div>
         )}
       </div>

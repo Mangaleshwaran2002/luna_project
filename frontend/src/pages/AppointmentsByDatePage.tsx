@@ -1,5 +1,5 @@
 import {  useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import AppointmentTable from "@/components/AppointmentTable";
 import type { Appointment, ApiAppointment} from '../types';
 import axios from "../utils/axios_config";
@@ -11,6 +11,27 @@ const AppointmentsByDatePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { socket, isConnected } = useSocket();
+
+  const deleteAppointment = useCallback(async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/appointments/${id}`);
+      if (response.status === 200) {
+        console.log('record deleted successfully.');
+        // setAppointments(prevAppointments => prevAppointments.filter(apt => apt._id !== id));
+      }
+    } catch (e: any) {
+      console.error("Failed to delete appointment:", e);
+    } 
+  }, []); // 👈 Empty deps — safe since it doesn't depend on state/props
+  const formattedDate = useMemo(() => {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }, [date]);
   useEffect(() => {
     if (!date) {
       setIsLoading(false);
@@ -26,6 +47,7 @@ const AppointmentsByDatePage = () => {
   // Listen for new/deleted appointments
   const handleCreated = (newAppointment: Appointment) => {
     // ✅ Trust the server — DO NOT recalculate appointmentDate
+    console.log(`updated appointments: ${newAppointment}`)
     setAppointments(prev => [...prev, newAppointment]);
   };
   if(isConnected){
@@ -64,6 +86,8 @@ const AppointmentsByDatePage = () => {
           notes: apt.notes,
           createdAt: apt.createdAt,
           updatedAt: apt.updatedAt,
+          category : apt.category,
+          sub_category : apt.sub_category,
         }));
         setAppointments(formattedAppointments);
       } catch (e: any) {
@@ -76,10 +100,13 @@ const AppointmentsByDatePage = () => {
 
     fetchAppointments();
     return () => {
+
     socket.off('appointment:created', handleCreated);
     socket.off('appointment:deleted');
+    setAppointments([]);
   };
   }, [date]);
+
 
   if (isLoading) {
     return <div className="p-6 text-center">Loading appointments...</div>;
@@ -92,26 +119,7 @@ const AppointmentsByDatePage = () => {
   if (!date) {
     return <div className="p-6 text-red-500">Invalid date.</div>;
   }
-  
-  const formattedDate = new Date(date).toLocaleDateString(undefined, {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  // Define the delete function in the parent component
-  const deleteAppointment = async (id: string) => {
-      try {
-        const response = await axios.delete(`/api/appointments/${id}`);
-        if(response.status === 200 ) {
-          console.log('record deleted successfully.');
-          // Update the state to remove the appointment
-          setAppointments(prevAppointments => prevAppointments.filter(apt => apt._id !== id));
-        }
-      } catch (e: any) {
-        console.error("Failed to delete appointment:", e);
-      } 
-  };
+
 
   return (
     <div className="p-6">

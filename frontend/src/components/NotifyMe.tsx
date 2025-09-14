@@ -35,7 +35,7 @@ const NotifyMe = () => {
 
         if (Notification.permission === "granted") {
             const notification = new Notification(`New Appointment 🗓️`, {
-                body: `Scheduled: ${date.toLocaleString()}`,
+                body: `Scheduled: ${date.toLocaleString('en-GB')}`,
                 tag: `appt-${newAppointment._id}`, // Helps browser dedupe
                 icon: "/logo.ico", // Optional: add an icon
                 requireInteraction: false, // ← Allows auto-dismiss in Chrome!
@@ -69,10 +69,11 @@ const NotifyMe = () => {
                 console.error("Error requesting notification permission:", error);
             });
         }
-        window.location.reload();
-        // setTimeout(() => {
-        // }, 5000);
         console.table(newAppointment);
+        // window.location.reload();
+        // setTimeout(() => {
+        // window.location.reload();
+        // }, 5000);
     }, []);
 
     useEffect(() => {

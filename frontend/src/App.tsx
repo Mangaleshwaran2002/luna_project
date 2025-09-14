@@ -10,6 +10,10 @@ import AppointmentFormPage from "./pages/AppointmentFormPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import ChangePasswd from "./pages/ChangePasswdPage";
 import Profile from "./pages/Profile";
+import CreateUserPage from "./pages/CreateUserPage";
+import UpdateAppointmentPage from "./pages/UpdateAppointmentPage";
+import ClientDetailsPage from "./pages/ClientDetailsPage";
+import ClientUpdateForm from "./components/ClientUpdateForm";
 
 
 const App = () => {
@@ -27,6 +31,12 @@ const App = () => {
               <Route path="/appointments/new" element={<AppointmentFormPage />} />
               <Route path="/" element={<HomePage />} />
               <Route path="/changepasswd" element={<ChangePasswd />} />
+              <Route path="/create/user" element={<CreateUserPage/>} />
+              <Route path="/update/appointment/:id" element={<UpdateAppointmentPage/>} />
+              <Route path="/clients" element={<ClientDetailsPage/>} />
+              <Route path="/clients/update/:id" element={<ClientUpdateForm/>} /> 
+              
+
 
               {/* New Route */}
               <Route path="/profile" element={<Profile />} />

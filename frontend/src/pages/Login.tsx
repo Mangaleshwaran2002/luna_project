@@ -101,15 +101,15 @@ export default function SignIn() {
       <div className="flex items-center justify-center p-5 w-screen">
         <Card className="max-w-sm w-full">
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-3xl md:text-lg  font-bold">Sign In</CardTitle>
+            <CardDescription className="text-md md:text-sm  font-bold">
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSignup} className="flex flex-col gap-4">
+            <form onSubmit={handleSignup} className="flex flex-col gap-4 text-2xl">
               <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className="text-md md:text-sm font-semibold">Username</Label>
                 <Input
                   id="username"
                   name="username"
@@ -121,7 +121,7 @@ export default function SignIn() {
                 />
               </div>
               <div className="grid gap-2 relative">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-md md:text-sm font-semibold">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -147,7 +147,7 @@ export default function SignIn() {
                   </button>
                 </div>
               </div>
-              <Button type="submit" className="w-full mt-2" disabled={loading}>
+              <Button type="submit" className="w-full mt-2 text-md md:text-sm font-semibold" disabled={loading}>
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>

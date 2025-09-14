@@ -6,27 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ChevronDownIcon } from "lucide-react";
-import {    
-    AlertDialogAction,
-   AlertDialogCancel   } from "@/components/ui/alert-dialog"
 import { authClient } from "../lib/auth-client"; // Adjust path as needed
+import { useNavigate } from 'react-router-dom';
 // Define the appointment interface as provided
 interface Appointment {
   start?: string; 
   end?: string; 
   platform?: "website" | "phone" | "in-person" | "whatsapp" | "instagram" | "";
-  type?: "consultation" | "follow-up" | "treatment" | "";
+  type?: "consultation" | "treatment" | "maintenance" | "";
   status?: "completed" | "cancelled" | "rescheduled" | "";
   scheduleBy? : String;
 }
 
 // Define component props
 interface AppointmentUpdateProps {
-  appointmentId?: string | undefined;
+  appointmentId?: string | null;
 }
 
 const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId }) => {
-  
+  const navigate = useNavigate()
   // State for date and time separately
   const [startDate, setStartDate] = useState<Date | undefined>(undefined);
   const [startTime, setStartTime] = useState<string | ''>('10:00:00');
@@ -102,7 +100,7 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
         setMessage('Appointment updated successfully!');
 
         setMessageType('success');
-        window.location.reload();
+        navigate('/');
         }
         
 
@@ -216,8 +214,8 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
           >
             <option value="">select Type</option>
             <option value="consultation">Consultation</option>
-            <option value="follow-up">Follow-up</option>
             <option value="treatment">Treatment</option>
+            <option value="maintenance">Maintenance</option>
           </select>
         </div>
 
@@ -238,10 +236,7 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
         </div>
 
         <div className="flex justify-center gap-2 md:gap-4">
-            <AlertDialogCancel className='capitalize'>
-                cancel
-            </AlertDialogCancel>
-          <AlertDialogAction
+          <Button
             type="submit"
             disabled={loading}
             className={` py-2 px-4 rounded-md text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
@@ -261,7 +256,7 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
             ) : (
               'Update Appointment'
             )}
-          </AlertDialogAction>
+          </Button>
         </div>
       </form>
     </div>

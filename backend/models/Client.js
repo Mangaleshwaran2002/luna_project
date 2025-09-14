@@ -24,6 +24,7 @@ const clientSchema = new mongoose.Schema({
   },
   contact: {
     type: String,
+    trim: true,
   },
   address: {
     type: String,
