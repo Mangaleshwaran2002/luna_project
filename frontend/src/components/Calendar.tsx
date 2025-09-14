@@ -12,7 +12,6 @@ import DateCell from "./DateCell";
 import { useNavigate } from "react-router-dom";
 import type { Appointment, ApiAppointment } from '../types';
 import axios from "../utils/axios_config";
-import { useSocket } from '../context/SocketContext';
 
 
 // Month and Year Lists
@@ -30,24 +29,7 @@ const Calendar: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { socket } = useSocket();
-  if (!socket) {
-        return;
-  }
 
-  const handleCreated = (newAppointment: Appointment) => {
-      // ✅ Trust the server — DO NOT recalculate appointmentDate
-      console.debug(`\n\n${newAppointment} \n\n`)
-      // setAppointments(prev => [...prev, newAppointment]);
-      // window.location.reload();
-  };
-  const handledeleted = () => {
-      // ✅ Trust the server — DO NOT recalculate appointmentDate
-      // setAppointments(prev => [...prev, newAppointment]);
-      window.location.reload();
-  };
-  socket.on('appointment:created', handleCreated);
-  socket.on('appointment:deleted', handledeleted);
   useEffect(() => {
 
     const fetchAppointments = async () => {

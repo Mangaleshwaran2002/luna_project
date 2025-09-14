@@ -32,7 +32,6 @@ export const createAppointment = async (req, res) => {
     if (global.io) {
       global.io.to(`appointments:${appointmentDate}`).emit('appointment:created', populatedAppointment);
       global.io.to(`appointments:${monthYear}`).emit('appointment:created', populatedAppointment);
-      global.io.emit('appointment:created', populatedAppointment);
     }
 
     res.status(201).json({
@@ -219,7 +218,6 @@ export const deleteAppointmentsbyId = async (req, res) => {
       global.io.to(`appointments:${appointmentDate}`).emit('appointment:deleted', {
         _id: appointment._id,
       });
-      global.io.emit('appointment:deleted');
     }
 
     res.status(200).json({ success: true, message: 'Appointment deleted' });

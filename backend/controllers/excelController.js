@@ -7,7 +7,6 @@ import { findOrCreateClient,
     combineDateTime,
     parseDateOnly,
     formatTime } from '../helpers/index.js';
-import Rescheduled from '../models/Rescheduled.js';
 
 // Export appointments to Excel file
 export const exportAppointments = async (req, res) => {

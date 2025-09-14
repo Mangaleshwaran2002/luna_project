@@ -69,8 +69,8 @@ const NotifyMe = () => {
                 console.error("Error requesting notification permission:", error);
             });
         }
+        window.location.reload();
         console.table(newAppointment);
-        // window.location.reload();
         // setTimeout(() => {
         // window.location.reload();
         // }, 5000);
