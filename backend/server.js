@@ -137,7 +137,7 @@ app.get('/create-admin', async (req, res) => {
     const newUser = await auth.api.createUser({
         body: {
             email: 'admin@example.com',
-            password: 'adminpass',
+            password: 'admin1234',
             name: 'Krithika sk',
             role: 'admin',
             data: {
@@ -163,7 +163,7 @@ app.get('/create-superuser', async (req, res) => {
     const newUser = await auth.api.createUser({
         body: {
             email: 'superuser@example.com',
-            password: 'superuser',
+            password: 'admin1234',
             name: 'Mangal Dev',
             role: 'admin',
             data: {
