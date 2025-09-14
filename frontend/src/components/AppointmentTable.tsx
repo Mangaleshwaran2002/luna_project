@@ -171,7 +171,7 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
           </div>
 
           {/* Platform Filter */}
-          <div className="flex flex-col items-center gap-2 w-full md:w-auto">
+          <div className="flex flex-col items-center gap-2">
             <Label>Platform</Label>
             <div className="flex items-center gap-2">
               <Select value={platformFilter} onValueChange={setPlatformFilter}>
