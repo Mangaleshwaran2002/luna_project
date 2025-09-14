@@ -31,17 +31,17 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
     >
       {/* <div className="text-lg md:text-sm font-medium">{day}</div> */}
       <div className={`text-lg md:text-sm font-medium px-2 rounded-full 
-        ${consultations && 'border-2 border-blue-300'} 
-        ${treatments && 'border-2 border-green-300'} 
-        ${maintenance && 'border-2 border-teal-300'}
-        ${(rescheduledConsultations > 0 || rescheduledTreatments > 0  || rescheduledMaintenance > 0) && 'border-2 border-orange-300'}
+        ${consultations && 'border-2 border-blue-400'} 
+        ${treatments && 'border-2 border-green-400'} 
+        ${maintenance && 'border-2 border-red-400'}
+        ${(rescheduledConsultations > 0 || rescheduledTreatments > 0  || rescheduledMaintenance > 0) && 'border-2 border-orange-500'}
         
         md:border-0`}>{day}</div> 
 
       <div className="hidden md:flex gap-1 mt-1">
         {/* Non-rescheduled consultation count */}
         {consultations > 0 && (
-          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-blue-300 rounded-full">
+          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-blue-400 rounded-full">
             {consultations}
           </div>
         )}
@@ -53,7 +53,7 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
         )}
         {/* Non-rescheduled treatment count */}
         {treatments > 0 && (
-          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-green-300 rounded-full">
+          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-green-400 rounded-full">
             {treatments}
           </div>
         )}
@@ -66,7 +66,7 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
 
         {/* Follow-up count (unchanged) */}
         {maintenance > 0 && (
-          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-teal-300 rounded-full">
+          <div className="flex items-center justify-center w-5 h-5 text-xs text-white bg-red-400 rounded-full">
             {maintenance}
           </div>
         )}

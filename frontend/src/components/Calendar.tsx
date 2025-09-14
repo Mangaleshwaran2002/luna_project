@@ -242,22 +242,17 @@ const Calendar: React.FC = () => {
         <div className="hidden md:flex justify-center items-center space-x-2 md:space-x-6 flex-col md:flex-row">
           {/* Non-rescheduled consultation count */}
           <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-300 rounded-full">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-blue-400 rounded-full">
           </span>
           <span className="mx-2 capitalize text-xs md:text-sm">consultations</span>
           </div>
           <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-green-300 rounded-full">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-green-400 rounded-full">
           </span>
           <span className="mx-2 capitalize text-xs md:text-sm">treatments</span>
           </div>
           <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-red-300 rounded-full">
-          </span>
-          <span className="mx-2 capitalize text-xs md:text-sm">follow_up</span>
-          </div>
-          <div className="flex justify-center items-center">
-          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-teal-300 rounded-full">
+          <span className="flex items-center justify-center w-3 h-3 text-xs text-white bg-red-400 rounded-full">
           </span>
           <span className="mx-2 capitalize text-xs md:text-sm">maintenance</span>
           </div>

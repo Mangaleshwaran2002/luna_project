@@ -70,7 +70,7 @@ const NotifyMe = () => {
             });
         }
         window.location.reload();
-        console.table(newAppointment);
+        // console.table(newAppointment);
         // setTimeout(() => {
         // window.location.reload();
         // }, 5000);
