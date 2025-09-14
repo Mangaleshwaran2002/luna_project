@@ -184,13 +184,17 @@ const AppointmentForm: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
+      if (response.status === 201) { // Also consider checking `response.status`
+        const result = response.data;
+        setResponseMessage('Appointment created successfully!');
+        console.log('Success:', result);
+        navigate('/');
+      } else {
+        // Log the actual status and data for a more informative message
+        console.error('Request was not successful:', response.status, response.statusText, response.data);
+        setResponseMessage(`Error creating appointment: ${response.statusText}`);
+      }
 
-      const result = response.data;
-      setResponseMessage('Appointment created successfully!');
-      console.log('Success:', result);
-      setTimeout(() => {
-                    navigate('/');
-      }, 1500);
 
     } catch (error) {
       setResponseMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);

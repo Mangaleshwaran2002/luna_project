@@ -93,15 +93,17 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
             'Content-Type': 'application/json'
           }
         });
-
-        // ✅ Remove the if(response.status === 200) — Axios will throw on non-2xx
-        if(response.status === 200){
+        if(response.statusText === 'OK'){
         alert('Appointment updated successfully!');
         setMessage('Appointment updated successfully!');
 
         setMessageType('success');
         navigate('/');
-        }
+        }else {
+        // Log the actual status and data for a more informative message
+        console.error('Request was not successful:', response.status, response.statusText, response.data);
+      }
+
         
 
 

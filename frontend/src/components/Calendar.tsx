@@ -39,7 +39,7 @@ const Calendar: React.FC = () => {
       // ✅ Trust the server — DO NOT recalculate appointmentDate
       console.debug(`\n\n${newAppointment} \n\n`)
       // setAppointments(prev => [...prev, newAppointment]);
-      window.location.reload();
+      // window.location.reload();
   };
   const handledeleted = () => {
       // ✅ Trust the server — DO NOT recalculate appointmentDate

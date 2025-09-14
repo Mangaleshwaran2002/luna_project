@@ -26,33 +26,6 @@ export const findOrCreateClient = async (clientData) => {
   return client;
 };
 
-// Helper function to combine date string (YYYY-MM-DD) and time string (HH:mm) into a Date object
-// export const combineDateTime = (dateString, timeString) => {
-//   if (!dateString || !timeString) {
-//     return null;
-//   }
-
-//   // Parse date: expect "YYYY-MM-DD"
-//   const [year, month, day] = dateString.split('-').map(Number);
-//   if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
-
-//   // Parse time: expect "HH:mm" (24-hour format)
-//   const [hours, minutes] = timeString.split(':').map(Number);
-//   if (isNaN(hours) || isNaN(minutes)) return null;
-
-//   // Validate ranges
-//   if (month < 1 || month > 12 || day < 1 || day > 31 || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
-//     return null;
-//   }
-
-//   const date = new Date(year, month - 1, day, hours, minutes, 0, 0);
-
-//   if (isNaN(date.getTime())) {
-//     return null;
-//   }
-
-//   return date;
-// };
 
 /**
  * Parse DD/MM/YYYY string into a Date object (time set to 00:00)

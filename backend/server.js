@@ -162,7 +162,7 @@ app.get('/create-superuser', async (req, res) => {
     try{
     const newUser = await auth.api.createUser({
         body: {
-            email: 'admin@example.com',
+            email: 'superuser@example.com',
             password: 'superuser',
             name: 'Mangal Dev',
             role: 'admin',
