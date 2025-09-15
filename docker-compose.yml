@@ -13,6 +13,8 @@ services:
       - APP_URL=${APP_URL}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+      - ADMIN_PASS=${ADMIN_PASS}
+      - SUPERUSER_PASS=${SUPERUSER_PASS}
     volumes:
       - ./backend/uploads:/app/uploads
     # depends_on:
@@ -33,14 +35,14 @@ services:
     networks:
       - app-network
 
-  # mongo:
-  #   image: mongo:latest
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - mongo-data:/data/db
-  #   networks:
-  #     - app-network
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
   
 
 

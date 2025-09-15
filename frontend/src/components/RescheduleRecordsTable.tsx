@@ -225,17 +225,12 @@ const RescheduleRecordsTable: React.FC = () => {
           filteredRecords.map((record) => (
             <Card key={record._id} className="border shadow-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg font-semibold">{record.client.name}</CardTitle>
+                <CardTitle className="text-2xl font-bold capitalize">{record.client.name}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   <div>
-                    <span className="text-lg font-
-      dockerfile: Dockerfile
-      args:
-        VITE_APP_URL: ${VITE_APP_URL}
-
-    volumes:bold">Original Date</span>
+                    <span className="text-lg font-bold">Original Date</span>
                     <p className="text-lg text-gray-600">{customFormatDate(record.preschedule.start)}</p>
                   </div>
                   <div>

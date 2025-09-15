@@ -439,7 +439,6 @@ export const updateAppointment = async (req, res) => {
       // Create Reschedule record
       const rescheduleData = {
         client: originalAppointment.client,
-        appointment: originalAppointment._id,
         preschedule: {
           start: originalAppointment.start,
           end: originalAppointment.end,

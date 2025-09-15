@@ -137,7 +137,7 @@ app.get('/create-admin', async (req, res) => {
     const newUser = await auth.api.createUser({
         body: {
             email: 'admin@example.com',
-            password: 'admin1234',
+            password: process.env.ADMIN_PASS || 'admin1234',
             name: 'Krithika sk',
             role: 'admin',
             data: {
@@ -147,7 +147,7 @@ app.get('/create-admin', async (req, res) => {
         },
     });
     if (newUser) {
-        res.json({ message: 'admin account created', user: newUser });
+        res.json({ message: 'admin account created', user: newUser, password: process.env.ADMIN_PASS || 'admin1234' });
     } else {
         res.status(401).send('Unauthorized');
     }
@@ -163,7 +163,7 @@ app.get('/create-superuser', async (req, res) => {
     const newUser = await auth.api.createUser({
         body: {
             email: 'superuser@example.com',
-            password: 'admin1234',
+            password: process.env.SUPERUSER_PASS ||'admin1234',
             name: 'Mangal Dev',
             role: 'admin',
             data: {
@@ -173,7 +173,7 @@ app.get('/create-superuser', async (req, res) => {
         },
     });
     if (newUser) {
-        res.json({ message: 'admin account created', user: newUser });
+        res.json({ message: 'admin account created', user: newUser , password: process.env.SUPERUSER_PASS ||'admin1234' });
     } else {
         res.status(401).send('Unauthorized');
     }

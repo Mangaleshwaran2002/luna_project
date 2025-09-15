@@ -1,5 +1,6 @@
 // controllers/excelController.js
 import Appointment from '../models/Appointment.js';
+import Reschedule from '../models/Rescheduled.js';
 import fs from 'fs'; 
 import ExcelJS from 'exceljs';
 import { findOrCreateClient, 
@@ -60,7 +61,7 @@ export const exportAppointments = async (req, res) => {
         );
         res.setHeader(
             'Content-Disposition',
-            'attachment; filename=' + 'appointments.xlsx'
+            'attachment; filename=' + `Appointments-${formatDate(new Date())}.xlsx`
         );
         await workbook.xlsx.write(res);
         res.end();
@@ -192,8 +193,8 @@ export const importAppointments = async (req, res) => {
           address: clientAddress,
         };
 
-        const clientId = await findOrCreateClient(client_data);
-        if (!clientId) {
+        const clientDoc = await findOrCreateClient(client_data);
+        if (!clientDoc._id) {
           errors.push({ row, error: 'Failed to create or find client' });
           continue;
         }
@@ -227,7 +228,7 @@ export const importAppointments = async (req, res) => {
 
         // Check for duplicate appointment (same client + same start time)
         const existingAppointment = await Appointment.findOne({
-          client: clientId,
+          client: clientDoc._id,
           start: startDateTime,
         });
 
@@ -240,7 +241,7 @@ export const importAppointments = async (req, res) => {
 
         // Create new appointment
         const newAppointment = new Appointment({
-          client: clientId,
+          client: clientDoc._id,
           start: startDateTime,
           end: endDateTime,
           appointmentDate: appointmentDate,
@@ -278,6 +279,236 @@ export const importAppointments = async (req, res) => {
       success: true,
       message: `${importedAppointments.length} appointments imported successfully.`,
       imported: importedAppointments,
+    });
+  } catch (error) {
+    console.error('Error importing data:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during import',
+      error: error.message,
+    });
+  }
+};
+
+
+
+// Export Reschedule to Excel file
+export const exportReschedule = async (req, res) => {
+    try {
+        const  reschedules= await Appointment.find().populate('client');
+        const  leanreschedules= await Reschedule.find().populate('client').lean();
+        console.error(leanreschedules);
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Reschedules');
+
+        // Define columns - Added 'Category' and 'Sub-Category'
+        worksheet.columns = [
+            { header: 'Client Name', key: 'clientName' },
+            { header: 'Client Age', key: 'clientAge' },
+            { header: 'Client Gender', key: 'clientGender' },
+            { header: 'Client Contact', key: 'clientContact' },
+            { header: 'Client Address', key: 'clientAddress' },
+            { header: 'Preschedule Date', key: 'prescheduleDate' },
+            { header: 'Preschedule Start Time', key: 'prescheduleStartTime' },
+            { header: 'Preschedule End Time', key: 'prescheduleEndTime' },
+            { header: 'Reschedule Date', key: 'rescheduleDate' },
+            { header: 'Reschedule Start Time', key: 'rescheduleStartTime' },
+            { header: 'Reschedule End Time', key: 'rescheduleEndTime' },
+            { header: 'Schedule By', key: 'scheduleBy' },
+        ];
+                // Add data
+        const data = leanreschedules.map(appt => ({
+            clientName: appt.client ? appt.client.name : 'N/A',
+            clientAge: appt.client ? appt.client.age : 'N/A',
+            clientContact: appt.client ? appt.client.contact : 'N/A',
+            clientGender: appt.client ? appt.client.gender : 'N/A',
+            clientAddress: appt.client ? appt.client.address : 'N/A',
+            prescheduleDate : formatDate(appt.preschedule.start),
+            prescheduleStartTime : formatTime(appt.preschedule.start),
+            prescheduleEndTime : formatTime(appt.preschedule.end),
+            rescheduleDate : formatDate(appt.reschedule.start),
+            rescheduleStartTime : formatTime(appt.reschedule.start),
+            rescheduleEndTime : formatTime(appt.reschedule.end),
+            scheduleBy : appt.scheduleBy
+        }));
+        worksheet.addRows(data);
+
+        // Send the file
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=' + `Reschedule-${formatDate(new Date())}.xlsx`
+        );
+        await workbook.xlsx.write(res);
+        res.end();
+        
+    } catch (error) {
+        console.error('Error exporting data:', error);
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+};
+
+// Import Reschedule from Excel file
+export const importReschedule = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No file uploaded.' });
+    }
+
+    const filePath = req.file.path;
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filePath);
+    const worksheet = workbook.getWorksheet(1);
+
+    if (!worksheet) {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({
+        success: false,
+        message: 'Excel file is empty or has no worksheets.',
+      });
+    }
+
+    const jsonData = [];
+    const headerRow = worksheet.getRow(1).values;
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) {
+        const rowData = {};
+        row.eachCell((cell, colNumber) => {
+          const header = headerRow[colNumber];
+          if (header) {
+            rowData[header] = cell.value;
+          }
+        });
+        jsonData.push(rowData);
+      }
+    });
+
+    if (jsonData.length === 0) {
+      fs.unlinkSync(filePath);
+      return res.status(400).json({ success: false, message: 'Excel file is empty.' });
+    }
+
+    const importedReschedules = [];
+    const errors = [];
+    for (const row of jsonData) {
+      try {
+        // Extract client data
+        const clientName = row['Client Name'];
+        const clientAge = row['Client Age'];
+        const clientGender = row['Client Gender'];
+        const clientContact = row['Client Contact'];
+        const clientAddress = row['Client Address'];
+
+        if (!clientName) {
+          errors.push({
+            row,
+            error: 'Missing required client information (Name or Contact)',
+          });
+          continue;
+        }
+
+        const client_data = {
+          name: clientName,
+          age: clientAge,
+          gender: clientGender,
+          contact: clientContact,
+          address: clientAddress,
+        };
+
+        const clientDoc = await findOrCreateClient(client_data);
+        if (!clientDoc._id) {
+          errors.push({ row, error: 'Failed to create or find client' });
+          continue;
+        }
+      // Parse appointment date and times
+        const prescheduleStartTime = combineDateTime(row['Preschedule Date'], row['Preschedule Start Time']);
+        const prescheduleEndTime = combineDateTime(row['Preschedule Date'], row['Preschedule End Time']);
+        const rescheduleStartTime = combineDateTime(row['Reschedule Date'], row['Reschedule Start Time']);
+        const rescheduleEndTime= combineDateTime(row['Reschedule Date'], row['Reschedule End Time']);
+
+        if (!prescheduleStartTime) {
+          errors.push({
+            row,
+            error: `Invalid Preschedule Start DateTime: Date='${row['Appointment Date']}', Time='${row['Start Time']}'`,
+          });
+          continue;
+        }
+        if (!prescheduleEndTime) {
+          errors.push({
+            row,
+            error: `Invalid Preschedule End DateTime: Date='${row['Appointment Date']}', Time='${row['End Time']}'`,
+          });
+          continue;
+        }
+        if (!rescheduleStartTime) {
+          errors.push({
+            row,
+            error: `Invalid Reschedule Start DateTime: Date='${row['Appointment Date']}', Time='${row['Start Time']}'`,
+          });
+          continue;
+        }
+        if (!rescheduleEndTime) {
+          errors.push({
+            row,
+            error: `Invalid Reschedule End DateTime: Date='${row['Appointment Date']}', Time='${row['End Time']}'`,
+          });
+          continue;
+        }
+        // Create Reschedule record
+        const rescheduleData = {
+          client: clientDoc._id,
+          preschedule: {
+            start: prescheduleStartTime,
+            end: prescheduleEndTime,
+          },
+          reschedule: {
+            start: rescheduleStartTime,
+            end: rescheduleEndTime,
+          },
+          scheduleBy: row['Schedule By'] || 'admin',
+        };
+
+        // Use upsert: true to create if not found
+        const savedReschedules = await Reschedule.findOneAndUpdate(
+          {
+            client: clientDoc._id,
+            'preschedule.start': prescheduleStartTime,
+            'preschedule.end': prescheduleEndTime,
+            'reschedule.start': rescheduleStartTime,
+            'reschedule.end': rescheduleEndTime,
+            scheduleBy: row['Schedule By'] || 'admin',
+          },
+          rescheduleData,
+          { upsert: true, new: true } // new: true returns the created/updated doc
+        );
+        importedReschedules.push(savedReschedules);
+      } catch (error) {
+        errors.push({ row, error: error.message });
+        console.error('Error importing row:', row, error);
+      }
+    }
+
+    // Clean up uploaded file
+    fs.unlinkSync(filePath);
+
+    // Respond with results
+    if (errors.length > 0) {
+      return res.status(207).json({
+        success: true,
+        message: `${importedReschedules.length} appointments imported successfully. ${errors.length} rows failed.`,
+        imported: importedReschedules,
+        errors,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `${importedReschedules.length} appointments imported successfully.`,
+      imported: importedReschedules,
     });
   } catch (error) {
     console.error('Error importing data:', error);

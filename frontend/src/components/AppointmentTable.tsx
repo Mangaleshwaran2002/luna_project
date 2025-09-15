@@ -362,21 +362,16 @@ const AppointmentTable: React.FC<AppointmentTableProps> = ({
                       <span className="text-lg font-bold">Age</span>
                       <p className="text-lg text-gray-600">{apt.client.age}</p>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                       <span className="text-lg font-bold">Type</span>
-                      <Badge
-                        variant="outline"
-                        className={`capitalize w-fit text-xs py-0.5 mx-2 sm:mx-4 px-2
-                          ${apt.type === "consultation"
-                            ? "border-green-500 text-green-700"
+                        <span className={`text-lg font-bold capitalize px-2
+                        ${apt.type === "consultation"
+                            ? "text-green-700"
                             : apt.type === "maintenance"
-                            ? "border-red-500 text-red-700"
+                            ? "text-red-700"
                             : apt.type === "treatment"
-                            ? "border-blue-500 text-blue-700"
-                            : ""}`}
-                      >
-                        {apt.type}
-                      </Badge>
+                            ? "text-blue-700"
+                            : ""}`}>{apt.type}</span>
                     </div>
                     <div>
                       <span className="text-lg font-bold">Category</span>

@@ -6,11 +6,6 @@ const rescheduleSchema = new mongoose.Schema({
     ref: 'Client',
     required: true,
   },
-  appointment: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Appointment',
-    required: true,
-  },
   preschedule: {
     start: { type: Date, required: true },
     end: { type: Date, required: true },
