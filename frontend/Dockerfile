@@ -20,17 +20,17 @@ COPY . .
 # Build the app
 RUN npm run build
 
-# Stage 2: Serve with lightweight nginx
-FROM nginx:alpine
+# # Stage 2: Serve with lightweight nginx
+# FROM nginx:alpine
 
-# Copy built assets
-COPY --from=builder /app/dist /usr/share/nginx/html
+# # Copy built assets
+# COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx config to serve SPA (handles client-side routing)
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# # Copy nginx config to serve SPA (handles client-side routing)
+# # COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port
+# # Expose port
 # EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# # Start nginx
+# CMD ["nginx", "-g", "daemon off;"]

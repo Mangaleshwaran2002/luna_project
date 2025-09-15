@@ -30,7 +30,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     // Initialize socket connection
     const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
-      autoConnect: false, // We'll manually connect
+      autoConnect: true, // We'll manually connect
     });
 
     // Event listeners

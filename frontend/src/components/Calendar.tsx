@@ -230,7 +230,7 @@ const Calendar: React.FC = () => {
         <div className="flex md:hidden items-center justify-center my-3">
           <Button
             // variant="outline"
-            className="flex md:hidden items-center gap-2 sm:w-auto shrink-0 w-6/12 text-lg md:text-sm font-semibold"
+            className="flex md:hidden items-center gap-2 sm:w-auto shrink-0 w-6/12 text-2xl font-semibold px-2 py-1"
             size="sm"
             onClick={() => navigate('/appointments/new')}
           >
