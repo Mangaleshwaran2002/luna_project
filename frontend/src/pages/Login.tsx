@@ -21,7 +21,8 @@ export default function SignIn() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false); // State for password visibility
-    
+    const [message, setMessage] = useState<string>('');
+    const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
     // Use an object to manage all form data with a single state
     const [formData, setFormData] = useState({
         username: "",
@@ -62,7 +63,8 @@ export default function SignIn() {
 
         if (loginError) {
           console.error("Login error:", loginError);
-          alert(loginError.message);
+          setMessage(`${loginError.message}`);
+          setMessageType('error');
           return;
         }
 
@@ -74,24 +76,27 @@ export default function SignIn() {
 
           if (sessionError || !sessionData) {
             console.error("Failed to fetch session after login:", sessionError);
-            alert("Login successful, but failed to load session. Please refresh.");
+            setMessage(`Error: ${sessionError}`);
+            setMessageType('error');
             return;
           }
 
           // Step 3: Now update context with correct data
           setUser(sessionData.user);
           setSession(sessionData.session);
-
+          setMessage(`login successfully.`);
+          setMessageType('success');
           // Step 4: Navigate home
           navigate("/", { replace: true });
         }
       } catch (err) {
         console.error("Unexpected error during login:", err);
-        alert("An unexpected error occurred. Please try again.");
+        alert(`Unexpected error during login:  ${err}`);
       } finally {
         setLoading(false);
       }
     };
+
 
     if (loading) {
         return (<div>Loading...</div>);
@@ -99,6 +104,13 @@ export default function SignIn() {
 
     return (
       <div className="flex items-center justify-center p-5 w-screen">
+        {message && (
+        <div className={`mb-4 p-3 rounded ${
+          messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`}>
+          {message}
+        </div>
+      )}
         <Card className="max-w-sm w-full">
           <CardHeader>
             <CardTitle className="text-3xl md:text-lg  font-bold">Sign In</CardTitle>

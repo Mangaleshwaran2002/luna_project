@@ -62,6 +62,7 @@ const ClientsBlocks: React.FC = () => {
           setClients(response.data);
           console.debug("Fetched clients:", response.data);
         } else {
+          setError(`Failed to fetch clients : ${response.data},Unexpected status: ${response.status}`);
           throw new Error(`Unexpected status: ${response.status}`);
         }
       } catch (err: any) {

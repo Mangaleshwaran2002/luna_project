@@ -102,6 +102,7 @@ const AppointmentUpdateForm: React.FC<AppointmentUpdateProps> = ({ appointmentId
         }else {
         // Log the actual status and data for a more informative message
         console.error('Request was not successful:', response.status, response.statusText, response.data);
+        alert(`Request was not successful: ${response.data}`)
       }
 
         

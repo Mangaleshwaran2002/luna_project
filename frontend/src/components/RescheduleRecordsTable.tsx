@@ -73,7 +73,7 @@ const RescheduleRecordsTable: React.FC = () => {
         
           setRecords(data.data as RescheduleRecord[]);
         } else {
-          setError("Failed to fetch records from API");
+          setError(`Failed to fetch records from API. Error : ${response.data}`);
         }
       } catch (err: any) {
         setError(err.message);
@@ -85,6 +85,8 @@ const RescheduleRecordsTable: React.FC = () => {
     fetchRecords();
     return ()=>{
       setRecords([]);
+      setError('');
+      setScheduleByFilter('all');
     }
   }, []); // The empty dependency array ensures this runs only once on mount
   const handleDelete = async (id: string) => {

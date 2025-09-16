@@ -110,6 +110,9 @@ const ClientUpdateForm: React.FC = () => {
         setTimeout(() => {
           navigate('/clients'); // Adjust route as needed
         }, 1500);
+      }else{
+        setMessage(`Error: ${response.data}, Status code : ${response.status}`);
+        setMessageType('error');
       }
     } catch (error: any) {
       console.error('Error updating client:', error);
