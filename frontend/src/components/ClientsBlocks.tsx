@@ -102,13 +102,13 @@ const ClientsBlocks: React.FC = () => {
   }
   return (<>
   <div className="flex items-center justify-center p-8">
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 w-10/12 md:w-6/12">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 w-10/12 md:w-auto">
         {clients.length > 0 ? (
           clients.map((client) => (
             <Card key={client._id}
-            className="relative border transition-all duration-100 hover:border-muted-foreground hover:shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-gray-100 py-0">
-               <CardContent className="flex space-x-4 p-4 w-auto justify-around md:justify-center">
-                <div className="text-xl md:text-md space-y-2 flex justify-center flex-col">
+            className="relative border transition-all duration-100 hover:border-muted-foreground hover:shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 hover:bg-gray-100 py-0 md:px-10">
+               <CardContent className="flex space-x-4 p-4 w-auto justify-around md:justify-start">
+                <div className="text-xl md:text-md space-y-2 flex justify-start flex-col w-full">
                   <div className="flex justify-center">
                       <Avatar className="h-20 w-20">
                       <AvatarImage src={''} alt={client.name} />
@@ -124,7 +124,7 @@ const ClientsBlocks: React.FC = () => {
                 <p className="text-lg font-semibold md:text-md text-gray-500">
                   Created: {new Date(client.createdAt).toLocaleDateString()}
                 </p>
-                <div className="space-x-2 flex">
+                <div className="space-x-2 flex ">
                     <Button variant={'ghost'} className="w-6/12 ring hover:ring-2 hover:ring-blue-300 hover:ring-offset-2" onClick={()=> navigate(`/clients/update/${client._id}`)}>
                         <Edit color="blue"/>
                     </Button>

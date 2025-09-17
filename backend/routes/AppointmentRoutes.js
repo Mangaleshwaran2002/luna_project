@@ -10,7 +10,6 @@ import {
   updateAppointment
 } from '../controllers/appointmentController.js'; // Use ES module import syntax and include .js extension
 import { importAppointments, exportAppointments,downloadTemplate } from '../controllers/excelController.js'; // Use ES module import syntax and include .js extension
-
 const router = express.Router();
 
 router.post('/', createAppointment);

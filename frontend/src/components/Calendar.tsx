@@ -36,7 +36,6 @@ const Calendar: React.FC = () => {
       setIsLoading(true);
       setError(null);
       try {
-
         const response = await axios.get(`/api/appointments/filter`, {
         params: {
           month: currentMonth + 1,
@@ -230,8 +229,7 @@ const Calendar: React.FC = () => {
         <div className="flex md:hidden items-center justify-center my-3">
           <Button
             // variant="outline"
-            className="flex md:hidden items-center gap-2 sm:w-auto shrink-0 w-6/12 text-2xl font-semibold px-2 py-1"
-            size="sm"
+            className="flex md:hidden items-center gap-2 sm:w-auto shrink-0 w-6/12 text-lg font-semibold px-2 py-1"
             onClick={() => navigate('/appointments/new')}
           >
             <Plus className="h-4 w-4" /> Add Appointment

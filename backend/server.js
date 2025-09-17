@@ -12,6 +12,7 @@ import fs from 'fs';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import { fileURLToPath } from 'url';
+import requireAuth from './middleware/auth_middleware.js'
 
 // --- ES Module Fixes for __dirname and __filename ---
 const __filename = fileURLToPath(import.meta.url);
@@ -96,9 +97,9 @@ async function registerRoutes() {
     const ClientsRoutes = await import('./routes/clientRoutes.js');
     // const { requireAuth } = await import('./middlewares/auth_middleware.js'); 
 
-    app.use('/api/appointments',  AppointmentRoutes.default);
-    app.use('/api/reschedule',  RescheduleRoutes.default);
-    app.use('/api/clients',  ClientsRoutes.default);
+    app.use('/api/appointments', requireAuth, AppointmentRoutes.default);
+    app.use('/api/reschedule',requireAuth,  RescheduleRoutes.default);
+    app.use('/api/clients', requireAuth, ClientsRoutes.default);
 }
 registerRoutes();
 
@@ -118,13 +119,22 @@ app.get('/health', (req, res) => {
 });
 
 // Profile route
-app.get('/profile', async (req, res) => {
-    const session = await auth.api.getSession({ headers: req.headers });
-    if (session) {
-        res.json({ message: 'You are authenticated!', user: session.user });
-    } else {
-        res.status(401).send('Unauthorized');
-    }
+// app.get('/profile', async (req, res) => {
+//     console.log(`\n\n\nHeaders : ${JSON.stringify(req.headers)}\n\n\n`);
+//     const session = await auth.api.getSession({ headers: req.headers });
+//     if (session) {
+//         res.json({ message: 'You are authenticated!', user: session.user });
+//     } else {
+//         res.status(401).send('Unauthorized');
+//     }
+// });
+
+app.get('/profile', requireAuth, (req, res) => {
+    // req.user is now available thanks to the middleware
+    res.json({ 
+        message: 'You are authenticated!', 
+        user: req.user 
+    });
 });
 // Profile route
 app.get('/check-env', async (req, res) => {

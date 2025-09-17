@@ -35,7 +35,6 @@ const DateCell: React.FC<DateCellProps> = ({ day, appointments, isCurrentMonth, 
         ${treatments && 'border-2 border-green-400'} 
         ${maintenance && 'border-2 border-red-400'}
         ${(rescheduledConsultations > 0 || rescheduledTreatments > 0  || rescheduledMaintenance > 0) && 'border-2 border-orange-500'}
-        
         md:border-0`}>{day}</div> 
 
       <div className="hidden md:flex gap-1 mt-1">

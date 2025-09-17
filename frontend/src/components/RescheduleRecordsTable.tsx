@@ -174,26 +174,26 @@ const RescheduleRecordsTable: React.FC = () => {
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Client Name</TableHead>
-              <TableHead>Original Appointment</TableHead>
-              <TableHead>Rescheduled Date</TableHead>
-              <TableHead>Rescheduled Time</TableHead>
-              <TableHead>Scheduled By</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
+              <TableHead className="text-lg font-bold">Client Name</TableHead>
+              <TableHead className="text-lg font-bold">Original Appointment</TableHead>
+              <TableHead className="text-lg font-bold">Rescheduled Date</TableHead>
+              <TableHead className="text-lg font-bold">Rescheduled Time</TableHead>
+              <TableHead className="text-lg font-bold">Scheduled By</TableHead>
+              <TableHead className="text-center text-lg font-bold">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredRecords.length > 0 ? (
               filteredRecords.map((record) => (
                 <TableRow key={record._id}>
-                  <TableCell className="font-medium">{record.client.name}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium text-2xl capitalize">{record.client.name}</TableCell>
+                  <TableCell className="text-lg">
                     {customFormatDate(record.preschedule.start)} at {customFormatTime(record.preschedule.start)}
                   </TableCell>
-                  <TableCell>{customFormatDate(record.reschedule.start)}</TableCell>
-                  <TableCell>{customFormatTime(record.reschedule.start)}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="capitalize">
+                  <TableCell className="text-lg">{customFormatDate(record.reschedule.start)}</TableCell>
+                  <TableCell className="text-lg">{customFormatTime(record.reschedule.start)}</TableCell>
+                  <TableCell className="">
+                    <Badge variant="outline" className="capitalize text-lg px-5">
                       {record.scheduleBy}
                     </Badge>
                   </TableCell>
@@ -232,19 +232,35 @@ const RescheduleRecordsTable: React.FC = () => {
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   <div>
-                    <span className="text-lg font-bold">Original Date</span>
+                    <span className="text-lg font-bold text-blue-500">Original Date</span>
                     <p className="text-lg text-gray-600">{customFormatDate(record.preschedule.start)}</p>
                   </div>
                   <div>
-                    <span className="text-lg font-bold">Original Time</span>
+                    <span className="text-lg font-bold text-blue-500">Original Time</span>
                     <p className="text-lg text-gray-600">{customFormatTime(record.preschedule.start)}</p>
                   </div>
                   <div>
-                    <span className="text-lg font-bold">Rescheduled Date</span>
+                    <span className="text-lg font-bold text-green-500">Rescheduled Date</span>
                     <p className="text-lg text-gray-600">{customFormatDate(record.reschedule.start)}</p>
                   </div>
                   <div>
-                    <span className="text-lg font-bold">Rescheduled Time</span>
+                    <span className="text-lg font-bold text-green-500">Rescheduled Time</span>
+                    <p className="text-lg text-gray-600">{customFormatTime(record.reschedule.start)}</p>
+                  </div>
+                  {/* <div>
+                    <span className="text-lg font-bold ">Original Date</span>
+                    <p className="text-lg text-gray-600">{customFormatDate(record.preschedule.start)}</p>
+                  </div>
+                  <div>
+                    <span className="text-lg font-bold ">Original Time</span>
+                    <p className="text-lg text-gray-600">{customFormatTime(record.preschedule.start)}</p>
+                  </div>
+                  <div>
+                    <span className="text-lg font-bold ">Rescheduled Date</span>
+                    <p className="text-lg text-gray-600">{customFormatDate(record.reschedule.start)}</p>
+                  </div>
+                  <div>
+                    <span className="text-lg font-bold ">Rescheduled Time</span>
                     <p className="text-lg text-gray-600">{customFormatTime(record.reschedule.start)}</p>
                   </div>
                   <div className="col-span-2 space-x-2">
@@ -252,7 +268,7 @@ const RescheduleRecordsTable: React.FC = () => {
                     <Badge variant="secondary" className="mt-1 capitalize text-lg text-gray-600">
                       {record.scheduleBy}
                     </Badge>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="pt-2">

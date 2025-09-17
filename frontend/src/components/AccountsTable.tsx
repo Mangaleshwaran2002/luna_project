@@ -143,10 +143,10 @@ return (
             <TableBody className="md:mx-10">
               {users.map((user) => user.username !== 'superuser' ? (
                 <TableRow key={user.id} className="transition-colors hover:bg-muted/30">
-                  <TableCell className="font-medium">{user.name || "N/A"}</TableCell>
-                  <TableCell className="text-sm">{user.email}</TableCell>
+                  <TableCell className="font-medium text-lg">{user.name || "N/A"}</TableCell>
+                  <TableCell className="text-lg">{user.email}</TableCell>
                   <TableCell>
-                    <span className="text-sm font-mono text-gray-600">{user.username || "N/A"}</span>
+                    <span className="text-lg">{user.username || "N/A"}</span>
                   </TableCell>
                   <TableCell>
                     <Badge 
@@ -155,7 +155,7 @@ return (
                       {user.role === "admin" ? "Admin" : "User"}
                     </Badge>
                   </TableCell>
-                  <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-lg">{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right space-y-2 md:space-y-0 flex flex-col md:flex-row gap-2 md:gap-3 justify-center">
                     <Button
                       variant="secondary"
@@ -202,7 +202,7 @@ return (
                   <span className="text-lg font-bold">Role </span>
                   <Badge 
                   // variant={user.role === "admin" ? "destructive" : "default"} 
-                  className={`text-white ${user.role === "admin" ? "bg-red-400" : "bg-blue-400"}`}>
+                  className={`text-white ${user.role === "admin" ? "bg-red-500" : "bg-blue-500"}`}>
                     {user.role === "admin" ? "Admin" : "User"}
                   </Badge>
                 </div>
@@ -210,23 +210,23 @@ return (
                   <span className="text-lg font-bold">Created At</span>
                   <p className="text-lg text-gray-600 ">{new Date(user.createdAt).toLocaleDateString()}</p>
                 </div>
-                <div className="flex space-x-2 pt-2">
+                <div className="flex space-x-2 pt-2 item-center">
                   <Button
                     variant="secondary"
                     size="sm"
                     onClick={() => ChangePasswd(user.id)}
                     disabled={changePasswdId === user.id}
-                    className="w-4/10"
+                    className="w-5/10 font-semibold text-lg"
                   >
-                    <RotateCcwKey />
+                    <RotateCcwKey />Change Password
                   </Button>
                   <Button
                     size="sm"
                     onClick={() => handleDelete(user.id)}
                     disabled={deletingId === user.id}
-                    className=" w-4/10"
+                    className="w-5/10 bg-red-500 font-semibold text-lg"
                   >
-                    <Trash2 />
+                    <Trash2 />Delete
                   </Button>
                   
                 </div>

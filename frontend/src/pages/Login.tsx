@@ -48,7 +48,8 @@ export default function SignIn() {
       e.preventDefault();
 
       if (!formData.username || !formData.password) {
-        alert("Please fill in all fields.");
+        setMessage("Please fill in all fields.");
+        setMessageType('error');
         return;
       }
 
@@ -63,7 +64,7 @@ export default function SignIn() {
 
         if (loginError) {
           console.error("Login error:", loginError);
-          setMessage(`${loginError.message}`);
+          setMessage(`Login error:${loginError.message}`);
           setMessageType('error');
           return;
         }

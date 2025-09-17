@@ -11,7 +11,7 @@ export default function AdminDashboard(){
         <>
         <div className="flex items-center flex-col md:p-5">
         <div className="w-full md:w-10/12 flex justify-end">
-            <Button variant={"secondary"} className="mx-4 my-2 md:my-4 capitalize ring" onClick={()=>navigate('/create/user')}><Plus/>Add</Button>
+            <Button variant={"secondary"} className="mx-4 my-2 md:my-4 capitalize ring" onClick={()=>navigate('/create/user')}><Plus/>Create</Button>
         </div>
         <AccountsTable/>
         </div>
