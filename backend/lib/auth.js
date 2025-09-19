@@ -28,6 +28,14 @@ export const auth = betterAuth({
             enabled: true
         }
     },
+    // session: {
+    //     expiresIn: 60 * 60 * 24 * 30, // 30 days in seconds
+    //     updateAge: 60 * 60 * 24 * 7, // 7 days in seconds
+    // },
+    session: {
+        expiresIn: 60 * 60 * 24 * 30 * 3, // 3 months in seconds
+        updateAge: 60 * 60 * 24 * 7, // 7 days in seconds
+    },
     trustedOrigins: [process.env.APP_URL || 'http://localhost:5173'],
     plugins: [
         admin(),

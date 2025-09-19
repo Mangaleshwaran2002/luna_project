@@ -118,18 +118,8 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', message: 'Backend is running' });
 });
 
-// Profile route
-// app.get('/profile', async (req, res) => {
-//     console.log(`\n\n\nHeaders : ${JSON.stringify(req.headers)}\n\n\n`);
-//     const session = await auth.api.getSession({ headers: req.headers });
-//     if (session) {
-//         res.json({ message: 'You are authenticated!', user: session.user });
-//     } else {
-//         res.status(401).send('Unauthorized');
-//     }
-// });
 
-app.get('/profile', requireAuth, (req, res) => {
+app.get('/api/profile', requireAuth, (req, res) => {
     // req.user is now available thanks to the middleware
     res.json({ 
         message: 'You are authenticated!', 
@@ -137,7 +127,7 @@ app.get('/profile', requireAuth, (req, res) => {
     });
 });
 // Profile route
-app.get('/check-env', async (req, res) => {
+app.get('/api/check-env', async (req, res) => {
     res.json({ PORT: process.env.PORT, APP_URL: process.env.APP_URL,BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,MONGO_URI :process.env.MONGO_URI});
 });
 
